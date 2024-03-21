@@ -59,8 +59,6 @@
 (require 'cl-lib)
 (require 'telega)
 
-(require 'all-the-icons)
-
 (defgroup telega-url-shorten nil
   "Customization for `telega-url-shorten' minor mode."
   :prefix "telega-url-shorten"
@@ -85,54 +83,7 @@
 ;;   (plist-put (cdr (assq '<LABEL> telega-url-shorten-regexps))
 ;;              :<PROP> <VALUE>)
 ;;   #+end_src
-(defcustom telega-url-shorten-regexps
-  (list
-   `(github-issue
-     :regexp "^https?://github.com/\\(.+\\)/issues/\\([0-9]+\\)"
-     :symbol ,(all-the-icons-faicon "github")
-     :replace "\\1#\\2"
-     :svg-icon ("fa-brands/github-octocat.svg" :scale 0.72))
-   `(github-repo
-     :regexp "^https?://github.com/\\(.+\\)/\\(.*\\)"
-     :symbol ,(all-the-icons-faicon "github")
-     :replace "\\1/\\2"
-     :svg-icon ("fa-brands/github-octocat.svg" :scale 0.72))
-  `(gitlab-issue
-    :regexp "^https?://gitlab.com/\\(.+\\)/issues/\\([0-9]+\\)"
-    :symbol ,(all-the-icons-faicon "gitlab")
-    :replace "\\1#\\2"
-    :svg-icon ("fa-brands/gitlab-rgb.svg" :scale 0.75))
-  `(gitlab-repo
-    :regexp "^https?://gitlab.com/\\(.+\\)/\\(.*\\)"
-    :symbol ,(all-the-icons-faicon "gitlab")
-    :replace "\\1/\\2"
-    :svg-icon ("fa-brands/gitlab-rgb.svg" :scale 0.75))
-   `(youtube
-     :regexp "^https?://www.youtube.com/watch.*[?&]v=\\([^&]+\\).+"
-     :symbol ,(all-the-icons-faicon "youtube-play")
-     :replace "YouTube#\\1"
-     :svg-icon ("fa-brands/youtube-rgb.svg" :scale 0.6))
-   `(youtu-be
-     :regexp "^https?://youtu.be/\\(.+\\)"
-     :symbol ,(all-the-icons-faicon "youtube-play")
-     :replace "YouTube#\\1"
-     :svg-icon ("fa-brands/youtube-rgb.svg" :scale 0.6))
-   `(wikipedia
-     :regexp "^https?://\\(\\w+.\\)\\{0,2\\}wikipedia.org/wiki/\\(.+\\)"
-     :symbol ,(all-the-icons-faicon "wikipedia-w")
-     :replace "wiki#\\2"
-     :svg-icon ("fa-brands/wikipedia.svg" :scale 0.85))
-   `(instagram
-     :regexp "^https?://\\(www\\.\\)?instagram.com/\\(.+\\)"
-     :symbol ,(all-the-icons-faicon "instagram")
-     :replace "Instagram#\\2"
-     :svg-icon ("fa-brands/instagram-rgb.svg" :scale 0.85))
-   `(tiktok
-     :regexp "^https?://\\(www\\|vm\\)\\.tiktok.com/\\(.+\\)"
-     :symbol "♪"
-     :replace "TikTok#\\2"
-     :svg-icon ("fa-brands/tiktok-rgb.svg" :scale 0.85))
-   )
+(defcustom telega-url-shorten-regexps nil
   "Alist of patterns for URL shortening."
   :type 'alist
   :group 'telega-url-shorten)

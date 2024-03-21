@@ -293,43 +293,7 @@ FORCE is used for testing only, should not be used in real code."
          (chat-id (plist-get msg :chat_id))
          (chat (telega-chat-get chat-id)))
     (unless (and (not force) (telega-msg-seen-p msg chat))
-      (ring-insert telega--notification-messages-ring msg)
-      (setq notify-args
-            (append
-             notify-args
-             (list :on-action `(lambda (&rest args)
-                                 (x-focus-frame (telega-x-frame))
-                                 (telega-chat--goto-msg
-                                     (telega-chat-get ,chat-id)
-                                     ,msg-id 'highlight))
-                   ;; NOTE: outgoing messages bypassed notification
-                   ;; conditions are scheduled messages, mark them
-                   ;; with calendar symbol
-                   ;; See https://github.com/tdlib/td/issues/1196
-                   :title (concat (when (plist-get msg :is_outgoing)
-                                    "📅 ")
-                                  (if (telega-me-p chat)
-                                      (telega-i18n "lng_notification_reminder")
-                                    (telega-ins--as-string
-                                     (telega-ins--msg-sender chat
-                                       :with-username-p t))))
-                   :body (if (telega-chat-notification-setting chat :show_preview)
-                             (telega-ins--as-string
-                              (funcall telega-inserter-for-msg-notification msg))
-                           "Has new unread messages"))
-             telega-notifications-msg-args))
-      ;; Play sound only if CHAT setting has some sound
-      (when (string-empty-p
-             (or (telega-chat-notification-setting chat :sound) ""))
-        (setq notify-args (telega-plist-del notify-args :sound-name)))
-
-      (telega-notifications--notify notify-args)
-      ;; Workaround stuck notifications, force closing after
-      ;; `telega-notifications-timeout' timeout
-      (run-with-timer telega-notifications-timeout nil
-                      'telega-notifications--close
-                      telega-notifications--last-id)
-      )))
+      (ring-insert telega--notification-messages-ring msg))))
 
 ;;; ellit-org: notification-conditions
 ;; Do *NOT* pop notification if:
@@ -387,6 +351,33 @@ FORCE is used for testing only, should not be used in real code."
                                                   :with-username-p t)))))
     (telega-notifications--notify
      (nconc notargs telega-notifications-call-args))))
+
+(defun telega--notification-messages-ring-index (msg)
+  "Return notifications MSG index inside `telega--notifications-messages-ring'."
+  (catch 'found
+    (dotimes (ind (ring-length telega--notification-messages-ring))
+      (let ((ring-msg (ring-ref telega--notification-messages-ring ind)))
+        (when (and (eq (plist-get msg :chat_id)
+                       (plist-get ring-msg :chat_id))
+                   (eq (plist-get msg :id)
+                       (plist-get ring-msg :id)))
+          (throw 'found ind))))))
+
+(defun telega--notifications-read-remove (&rest _)
+  "Function to remove read message."
+  (dolist (msg (ring-elements telega--notification-messages-ring))
+    (when (telega-msg-observable-p msg)
+      (when-let ((ind (telega--notification-messages-ring-index msg)))
+        (ring-remove telega--notification-messages-ring ind)))))
+
+(defun telega--notifications-goto-remove (&rest _)
+  (dolist (msg (ring-elements telega--notification-messages-ring))
+    (when (eq (plist-get msg :id) (plist-get (telega-msg-at (point)) :id))
+      (when-let ((ind (telega--notification-messages-ring-index msg)))
+        (ring-remove telega--notification-messages-ring ind)))))
+
+(advice-add 'telega-chatbuf--msg-view :after 'telega--notifications-read-remove)
+(advice-add 'telega-msg-goto :after 'telega--notifications-goto-remove)
 
 ;;;###autoload
 (define-minor-mode telega-notifications-mode

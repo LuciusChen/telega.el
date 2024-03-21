@@ -131,7 +131,7 @@ See docstring for `display-buffer' for the value meaning."
     (kotlin . kotlin-mode)              ; not in language-detection
     (latex . latex-mode)
     (lisp . lisp-mode)
-    (lua . lua-mode)
+    ;; (lua . lua-mode)
     (matlab . matlab-mode)
     (objc . objc-mode)
     (octave . octave-mode)              ; not in language-detection
