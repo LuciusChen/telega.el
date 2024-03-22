@@ -143,7 +143,7 @@ See docstring for `display-buffer' for the value meaning."
     (python . python-mode)
     (r . ess-r-mode)
     (ruby . ruby-mode)
-    (rust . rust-mode)
+    ;; (rust . rust-mode)
     (scala . scala-mode)
     (shell . sh-mode)
     (smalltalk . smalltalk-mode)
@@ -289,7 +289,7 @@ language-detection is used in this case, used for
   "Highligh TEXT in case of code block with defined language."
   (when (and telega-msg--current
              (with-telega-chatbuf (telega-msg-chat telega-msg--current 'offline)
-               telega-mnz-mode)
+                                  telega-mnz-mode)
              (memq (telega--tl-type ent-type) telega-mnz-entity-types))
     (when-let ((mode (telega-mnz--mode-for-language
                       (telega-tl-str ent-type :language) text)))
@@ -356,7 +356,7 @@ To cancel, hit %s.")
   (interactive (list (telega-msg-at (point)) current-prefix-arg))
 
   (if-let* ((cb-ent (when (with-telega-chatbuf (telega-msg-chat msg 'offline)
-                            telega-mnz-mode)
+                                               telega-mnz-mode)
                       (get-text-property (point) :tl-entity)))
             (code-block-p (memq (telega--tl-type (plist-get cb-ent :type))
                                 telega-mnz-entity-types))
