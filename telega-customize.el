@@ -111,8 +111,8 @@ Only writable options can be set.  See: https://core.telegram.org/tdlib/options"
 (defcustom telega-debug nil
   "*Non-nil to enable telega debugging buffer."
   :type '(choice (boolean :tag "On/Off")
-          (list (choice (const :tag "Add debug into IV" iv)
-                 (const :tag "Add debug into info buffers" info))))
+                 (list (choice (const :tag "Add debug into IV" iv)
+                               (const :tag "Add debug into info buffers" info))))
   :group 'telega)
 
 (defcustom telega-use-test-dc nil
@@ -176,15 +176,15 @@ where PROXY-TYPE is one of:
 Value is a format accepted by `format-time-string'."
   :package-version '(telega . "0.8.240")
   :type '(alist :key-type
-          (choice (const :tag "If date is today" today)
-           (const :tag "If date is on this week" this-week)
-           (const :tag "If date is older than this week" old)
-           (const :tag "Format for the date only" date)
-           (const :tag "Format for the time only" time)
-           (const :tag "Full date with time" date-time)
-           (const :tag "Long format for the date only" date-long)
-           (const :tag "Format for date break bar" date-break-bar))
-          :value-type string)
+                (choice (const :tag "If date is today" today)
+                        (const :tag "If date is on this week" this-week)
+                        (const :tag "If date is older than this week" old)
+                        (const :tag "Format for the date only" date)
+                        (const :tag "Format for the time only" time)
+                        (const :tag "Full date with time" date-time)
+                        (const :tag "Long format for the date only" date-long)
+                        (const :tag "Format for date break bar" date-break-bar))
+                :value-type string)
   :group 'telega)
 
 (defcustom telega-help-messages t
@@ -296,10 +296,10 @@ Each element is cons cell, where car is Chat Filter, and cdr is color."
   "Action to take on login url keyboard buttons."
   :package-version '(telega . "0.6.30")
   :type '(choice (const :tag "Ask user what to do" query-all)
-          (const :tag "Ask user to open url only" query-open)
-          (const :tag "Open url without query, but query user for login and write access" query-login-and-write-access)
-          (const :tag "Open url without query, but query user for login, without querying for write access" query-login-only)
-          (const :tag "Do not login, just open the url" nil))
+                 (const :tag "Ask user to open url only" query-open)
+                 (const :tag "Open url without query, but query user for login and write access" query-login-and-write-access)
+                 (const :tag "Open url without query, but query user for login, without querying for write access" query-login-only)
+                 (const :tag "Do not login, just open the url" nil))
   :group 'telega)
 
 (defcustom telega-chat--display-buffer-action
@@ -314,7 +314,7 @@ See docstring for `display-buffer' for the values."
 If nil, then use language suggested by the server."
   :package-version '(telega . "0.8.72")
   :type '(choice (const :tag "Suggested by the server" nil)
-          string)
+                 string)
   :group 'telega)
 
 (defcustom telega-translate-replace-content nil
@@ -357,7 +357,7 @@ Including `telega-server'.
 Could be a string denoting binary to use instead of \"docker\"."
   :package-version '(telega . "0.7.40")
   :type '(choice boolean
-          (string :tag "Docker binary"))
+                 (string :tag "Docker binary"))
   :options '("podman")
   :group 'telega-docker)
 
@@ -385,7 +385,7 @@ If nil, autogenerate the command according to all telega docker settings.
 %i - substituted with infered docker image name."
   :package-version '(telega . "0.7.40")
   :type '(choice (const :tag "Automatically generate" nil)
-          (string :tag "Custom docker command"))
+                 (string :tag "Custom docker command"))
   :group 'telega-docker)
 
 (defcustom telega-docker-run-arguments nil
@@ -394,7 +394,7 @@ For podman setup you might want to use \"--userns=keep-id\" as value
 for the `telega-docker-run-arguments'."
   :package-version '(telega . "0.8.75")
   :type '(choice (const :tag "No additional arguments" nil)
-          (string :tag "Custom docker run arguments"))
+                 (string :tag "Custom docker run arguments"))
   :group 'telega-docker)
 
 
@@ -415,7 +415,7 @@ for the `telega-docker-run-arguments'."
         (car (member "Noto Color Emoji" ffl))))
   "*Font to use for emoji image generation using `telega-emoji-create-svg'."
   :type '(choice (const :tag "None" nil)
-          (string :tag "Font Name"))
+                 (string :tag "Font Name"))
   :group 'telega-emoji)
 
 (defcustom telega-emoji-use-images
@@ -437,7 +437,7 @@ Used only if `telega-emoji-use-images' is non-nil."
 car is height in chars to use.
 cdr is maximum width in chars to use."
   :type '(cons (integer :tag "Height in chars")
-          (integer :tag "Maximum width in chars"))
+               (integer :tag "Maximum width in chars"))
   :group 'telega)
 
 (defcustom telega-sticker-favorite-background "cornflower blue"
@@ -544,8 +544,8 @@ Each element is in form:
 See `telega-avatar--create-image' for more info."
   :package-version '(telega . "0.5.8")
   :type '(alist :key-type (integer :tag "Height in chars")
-          :value-type (cons (number :tag "Circle factor")
-                       (number :tag "Margin factar")))
+                :value-type (cons (number :tag "Circle factor")
+                                  (number :tag "Margin factar")))
   :group 'telega)
 
 (defcustom telega-avatar-workaround-gaps-for nil
@@ -598,16 +598,16 @@ NOT USED."
 (defcustom telega-video-player-command
   (cond ((executable-find "ffplay")
          '(concat "ffplay -autoexit"
-           (when telega-ffplay-media-timestamp
-             (format " -ss %f" telega-ffplay-media-timestamp))))
+                  (when telega-ffplay-media-timestamp
+                    (format " -ss %f" telega-ffplay-media-timestamp))))
         ((executable-find "mpv")
          '(concat "mpv"
-           (when telega-ffplay-media-timestamp
-             (format " --start=%f" telega-ffplay-media-timestamp))))
+                  (when telega-ffplay-media-timestamp
+                    (format " --start=%f" telega-ffplay-media-timestamp))))
         ((executable-find "mplayer")
          '(concat "mplayer"
-           (when telega-ffplay-media-timestamp
-             (format " -ss %f" telega-ffplay-media-timestamp)))))
+                  (when telega-ffplay-media-timestamp
+                    (format " -ss %f" telega-ffplay-media-timestamp)))))
   "Command used to play video files.
 Can be a sexp to evaluate to get a command."
   :package-version '(telega . "0.7.57")
@@ -632,11 +632,11 @@ Supported message types are: `photo', `video', `audio',
 Document messages are always opens as file."
   :package-version '(telega . "0.7.0")
   :type '(repeat (choice (const :tag "Photo messages" photo)
-                  (const :tag "Video messages" video)
-                  (const :tag "Audio messages" audio)
-                  (const :tag "Video Note messages" video-note)
-                  (const :tag "Voice Note messages" voice-note)
-                  (const :tag "Animation messages" animation)))
+                         (const :tag "Video messages" video)
+                         (const :tag "Audio messages" audio)
+                         (const :tag "Video Note messages" video-note)
+                         (const :tag "Voice Note messages" voice-note)
+                         (const :tag "Animation messages" animation)))
   :group 'telega)
 
 (defcustom telega-open-message-ffplay-args
@@ -660,7 +660,7 @@ Some useful ffplay arguments to consider:
 Each element is in form: `(PREDICATE-OR-REGEX . FUNCTION)'."
   :package-version '(telega . "0.7.8")
   :type '(alist :key-type (choice function regexp)
-          :value-type function)
+                :value-type function)
   :group 'telega)
 
 ;; Locations
@@ -782,8 +782,8 @@ Car is name of the chats group, cdr is a chat temex to match chats."
 Could be one of `prepend', `append' or nil."
   :package-version '(telega . "0.8.221")
   :type '(choice (const :tag "Prepend folders" prepend)
-          (const :tag "Append folders" append)
-          (const :tag "Do not add folders" nil))
+                 (const :tag "Append folders" append)
+                 (const :tag "Do not add folders" nil))
   :group 'telega-root)
 
 (defcustom telega-root-view-grouping-other-chats t
@@ -828,7 +828,7 @@ for rootbuf and chatbuf.
 Consider setting `switch-to-buffer-preserve-window-point' to nil,
 to make `telega-root-keep-cursor' always work as expected."
   :type '(choice (const :tag "Track chat buffers" track)
-          (const :tag "Stick to chat at point" t))
+                 (const :tag "Stick to chat at point" t))
   :group 'telega-root)
 
 (defcustom telega-root-show-avatars telega-use-images
@@ -897,30 +897,22 @@ See list of all available icon names in `telega-folder-icon-names'."
   :group 'telega)
 
 ;;; ellit-org: folders-options
-;; - {{{user-option(telega-chat-folder-format, 2)}}}
-(defcustom telega-chat-folder-format (propertize "%F | " 'face 'bold)
-  "*Non-nil to prefix chat's title with chat folder.
-%I - Replaced with folder's icon from `telega-folder-icon-names' or
-     empty string if there is no icon.
-%i - Replaced with folder's icon from `telega-folder-format' or
-     `telega-symbol-folder' if there is no icon.
-%f - Replaced with folder's title.
-%F - Replaced with folder's icon from `telega-folder-icon-names'
-     if icon is unique, or equivalent to %I%f."
-  :package-version '(telega . "0.6.30")
-  :type 'string
-  :group 'telega-root)
+;; - {{{user-option(telega-chat-folders-insexp, 2)}}}
+(defcustom telega-chat-folders-insexp 'telega-folders-insert-default
+  "Inserter sexp for chat folders prefixing chat's title.
+While using this insexp `telega-chat-folders' is bound to the list of
+folder names to be inserted."
+  :package-version '(telega . "0.8.255")
+  :type 'sexp
+  :group 'telega-chat)
 
 ;;; ellit-org: folders-options
 ;; - {{{user-option(telega-chat-folders-exclude, 2)}}}
 (defcustom telega-chat-folders-exclude (list "Unread" "Personal")
-  "Exclude these folders when determining chat's folder.
-When determining which chat folder to use in
-`telega-chat-folders-format', these folders are excluded, if
-single folder is left, then it is used in the formatting."
+  "Exclude these folders from chat folders list to be displayed."
   :package-version '(telega . "0.6.30")
   :type '(repeat (string :tag "Folder"))
-  :group 'telega-root)
+  :group 'telega-chat)
 
 (defcustom telega-chat-title-custom-for
   (list (cons '(or saved-messages replies-messages)
@@ -931,7 +923,7 @@ Each element is a cons cell, where car is a Chat Temex and cdr
 is a function accepting title string and returning string."
   :package-version '(telega . "0.6.31")
   :type '(alist :key-type telega-chat-temex
-          :value-type function)
+                :value-type function)
   :group 'telega-root)
 
 (defcustom telega-chat-button-width '(0.35 15 48)
@@ -944,15 +936,15 @@ min and max values for a width calculation using
  `telega-canonicalize-number'."
   :package-version '(telega . "0.7.41")
   :type '(choice number (list number))
-  :group 'telega-root)
+  :group 'telega-chat)
 
 (defcustom telega-chat-button-format-plist
-  (list :with-folder-format telega-chat-folder-format
+  (list :with-folders-insexp 'telega-chat-folders-insexp
         :with-unread-trail-p t
         :with-status-icons-trail-p t)
   "Plist specifies formatting for a chat button in the rootbuf.
 Possible arguments:
-`:with-folder-format'   - To show folder as prefix inside brackets.
+`:with-folders-insexp'  - Use inserter sexp for chat folders.
 `:with-username-p'      - To show username along with title.
                           Could be a face to be used for username.
 `:with-title-faces-p'   - To use chat specific colors for title.
@@ -961,7 +953,19 @@ Possible arguments:
 `:with-status-icons-trail-p' - To show status icons outside brackets."
   :package-version '(telega . "0.8.121")
   :type 'plist
-  :group 'telega-root)
+  :group 'telega-chat)
+
+(defcustom telega-chat-format-plist-for-completion
+  (list ;:with-folders-insexp 'telega-chat-folders-insexp
+   :with-title-faces-p t
+   :with-username-p 'telega-username
+   :with-unread-trail-p t
+   :with-status-icons-trail-p t)
+  "Formatting for the chat button while performing read with completions.
+Used in the `telega-msg-sender-title-for-completion' function."
+  :package-version '(telega . "0.8.255")
+  :type 'plist
+  :group 'telega-chat)
 
 (defcustom telega-chat-button-format-temex nil
   "Non-nil to use temex instead of `telega-chat-button-format-plist'.
@@ -1060,9 +1064,9 @@ See https://github.com/zevlg/telega.el/issues/171"
 
 (defcustom telega-important-chat-temex
   '(or mention
-    (and (or is-known has-chatbuf)
-     unmuted
-     (or unread unread-reactions)))
+       (and (or is-known has-chatbuf)
+            unmuted
+            (or unread unread-reactions)))
   "*Chat Temex to match \"important\" chats."
   :package-version '(telega . "0.8.44")
   :type 'telega-chat-temex
@@ -1086,7 +1090,7 @@ NAME can be an i18n string, such as \"lng_filters_type_groups\".
 This filters are displayed as filter buttons at the top of rootbuf."
   :package-version '(telega . "0.8.13")
   :type '(alist :key-type (string :tag "Custom filter name")
-          :value-type telega-chat-temex)
+                :value-type telega-chat-temex)
   :group 'telega-filter)
 
 (defcustom telega-filter-custom-expand t
@@ -1109,7 +1113,7 @@ If `folders' is in the list, then display all folders in one line.
 Otherwise fit custom filters into `telega-root-fill-column'."
   :package-version '(telega . "0.7.56")
   :type '(repeat (choice (const :tag "Custom Filters" custom)
-                  (const :tag "Folders" folders)))
+                         (const :tag "Folders" folders)))
   :group 'telega-filter)
 
 (defcustom telega-filter-button-width '(0.25 17 25)
@@ -1200,13 +1204,13 @@ See `telega-ins--message' for NO-HEADER argument."
 
 (defcustom telega-webpage-header-line-format
   '(" " (:eval (concat telega-webpage--sitename
-                (and telega-webpage--sitename ": ")
-                telega-webpage--url
-                "  "
-                (format "History: %d/%d"
-                 (1+ telega-webpage-history--index)
-                 (length telega-webpage-history))
-                )))
+                       (and telega-webpage--sitename ": ")
+                       telega-webpage--url
+                       "  "
+                       (format "History: %d/%d"
+                               (1+ telega-webpage-history--index)
+                               (length telega-webpage-history))
+                       )))
   "Header line format for instant webpage."
   :type 'sexp
   :group 'telega-webpage)
@@ -1225,7 +1229,7 @@ See `telega-ins--message' for NO-HEADER argument."
 Set to nil to disable photo in a webpage preview."
   :package-version '(telega . "0.7.20")
   :type '(choice (const :tag "Disable photo preview" nil)
-          (list integer integer integer integer))
+                 (list integer integer integer integer))
   :group 'telega-webpage)
 
 (defcustom telega-webpage-preview-description-limit 200
@@ -1233,8 +1237,8 @@ Set to nil to disable photo in a webpage preview."
 Set to 0 to disable description in a webpage preview."
   :package-version '(telega . "0.7.20")
   :type '(choice (const :tag "No limit" nil)
-          (const :tag "Disable webpage preview description" 0)
-          integer)
+                 (const :tag "Disable webpage preview description" 0)
+                 integer)
   :group 'telega-webpage)
 
 
@@ -1265,7 +1269,7 @@ Used when showing chat members list."
   "*Format for the last seen time for the user.
 Might be a `relative' to show time relative to now."
   :type '(choice (const :tag "Relative to the current time" relative)
-          string)
+                 string)
   :package-version '(telega . "0.8.251")
   :options '("%d.%m.%y %a %H:%M"))
 
@@ -1309,8 +1313,8 @@ Done by recentering point in the chatbuf."
   "Markup to use for usernames completion."
   :package-version '(telega . "0.8.82")
   :type '(choice (const :tag "No markup" nil)
-          (const :tag "Markdown1" "markdown1")
-          (const :tag "Markdown2" "markdown2"))
+                 (const :tag "Markdown1" "markdown1")
+                 (const :tag "Markdown2" "markdown2"))
   :group 'telega-company)
 
 (defcustom telega-company-username-complete-nonmember-for '(type bot)
@@ -1324,9 +1328,9 @@ Done by recentering point in the chatbuf."
 Frist giving non-nil result will be used."
   :package-version '(telega . "0.8.152")
   :type '(repeat (choice (const :tag "Username" username)
-                  (const :tag "First Name" first-name)
-                  (const :tag "Last Name" last-name)
-                  (const :tag "Full Name" full-name)))
+                         (const :tag "First Name" first-name)
+                         (const :tag "Last Name" last-name)
+                         (const :tag "Full Name" full-name)))
   :group 'telega-company)
 
 (defcustom telega-company-emoji-fuzzy-match t
@@ -1414,7 +1418,7 @@ as starting point of italic emphasize even inside URLs, thats why
 \"markdown1\" is not included into `telega-chat-input-markups' by
 default."
   :type '(repeat (choice (const :tag "No markup" nil)
-                  string))
+                         string))
   :package-version '(telega . "0.8.61")
   :group 'telega-chat)
 
@@ -1504,14 +1508,14 @@ different days. Such as:
      (return t) telega-chatbuf-attach-dice)
     ("screenshot"
      (and (my-permission :can_send_photos)
-      (eval telega-screenshot-function))
+          (eval telega-screenshot-function))
      telega-chatbuf-attach-screenshot)
     ("clipboard"
      (and (my-permission :can_send_photos)
-      (eval
-       ;; Avoid "Selection owner couldn't convert" error
-       (ignore-errors
-         (gui-get-selection 'CLIPBOARD 'image/png))))
+          (eval
+           ;; Avoid "Selection owner couldn't convert" error
+           (ignore-errors
+             (gui-get-selection 'CLIPBOARD 'image/png))))
      telega-chatbuf-attach-clipboard)
     ("markup"
      (return t) telega-chatbuf-attach-markup)
@@ -1534,8 +1538,8 @@ different days. Such as:
      has-default-sender telega-chatbuf-attach-send-by)
     ("custom-emoji"
      (or saved-messages
-      (eval
-       (telega-user-match-p (telega-user-me) 'is-premium)))
+         (eval
+          (telega-user-match-p (telega-user-me) 'is-premium)))
      telega-chatbuf-attach-custom-emoji)
     ("delimiter"
      (return t) telega-chatbuf-attach-delimiter)
@@ -1548,7 +1552,7 @@ Only commands with chatbuf matching corresponding CHAT-TEMEX are
 available for attachment.  Use `(return t)' CHAT-TEMEX if attachment
 command is always available."
   :type '(alist :key-type (string :tag "Attach name")
-          :value-type (list telega-chat-temex function))
+                :value-type (list telega-chat-temex function))
   :group 'telega-chat)
 
 (custom-declare-variable
@@ -1580,8 +1584,8 @@ Non-nil activates syntax:
   code code
   ```"
   :type '(choice (const :tag "Disabled" nil)
-          (const :tag "Always" t)
-          (const :tag "Only for languages known by Emacs" known))
+                 (const :tag "Always" t)
+                 (const :tag "Only for languages known by Emacs" known))
   :group 'telega-chat)
 
 ;; See https://t.me/emacs_telega/11981
@@ -1722,8 +1726,8 @@ See `mode-line-buffer-identification'."
   "List of symbols to use instead of text in the inline aux."
   :package-version '(telega . "0.8.210")
   :type '(repeat (choice (const :tag "Reply to" reply)
-                  (const :tag "Reply with quote" reply-quote)
-                  (const :tag "Forwarded from" forward)))
+                         (const :tag "Reply with quote" reply-quote)
+                         (const :tag "Forwarded from" forward)))
   :group 'telega-chat)
 
 
@@ -1885,7 +1889,7 @@ no longer work."
   "*Directory for `telega-msg-save' without asking.
 If nil, the saved path is always asked."
   :type '(choice (const :tag "Always ask for a directory to save to" nil)
-          string)
+                 string)
   :group 'telega-msg)
 
 (defcustom telega-msg-temex-show-reactions '(return t)
@@ -1893,8 +1897,8 @@ If nil, the saved path is always asked."
   :package-version '(telega . "0.8.13")
   :type 'telega-msg-temex
   :options '((or (chat (type private))
-              (sender me)
-              has-chosen-reaction))
+                 (sender me)
+                 has-chosen-reaction))
   :group 'telega-msg)
 
 (defcustom telega-topic-format-alist
@@ -1985,7 +1989,7 @@ example @gif `TAB' will popup buffer with inlined photos. "
 It can be an inserter function accepting one argument - ignored message."
   :package-version '(telega . "0.8.215")
   :type '(choice (boolean :tag "Enable/Disable")
-          (function :tag "Custom inserter for ignored message"))
+                 (function :tag "Custom inserter for ignored message"))
   :group 'telega-chat)
 
 (defcustom telega-ignored-messages-ring-size 100
@@ -2149,6 +2153,18 @@ cdr is used if custom order is greater then real chat's order."
   :type 'string
   :group 'telega-symbol)
 
+(defcustom telega-symbol-button-left "["
+  "Symbol to use for left part of the button."
+  :package-version '(telega . "0.8.255")
+  :type 'string
+  :group 'telega-symbol)
+
+(defcustom telega-symbol-button-right "]"
+  "Symbol to use for right part of the button."
+  :package-version '(telega . "0.8.255")
+  :type 'string
+  :group 'telega-symbol)
+
 (defcustom telega-symbol-failed (propertize "⛔" 'face 'error)
   "Mark messages that have sending state failed."
   :type 'string
@@ -2178,11 +2194,6 @@ Horizontal delimiters are used to draw chat filter/sorter bar in rootbuf."
   "Symbol used to draw underline bar in chatbuf with partial history."
   :type 'string
   :options '("🢑" "🢓")
-  :group 'telega-symbol)
-
-(defcustom telega-symbol-draft (propertize "Draft" 'face 'error)
-  "Symbol used for draft formatting."
-  :type 'string
   :group 'telega-symbol)
 
 (defcustom telega-symbol-unread "●"
@@ -2482,10 +2493,16 @@ Used in one line message inserter."
   :type 'string
   :group 'telega-symbol)
 
+(defcustom telega-symbol-typing ".."
+  "Symbol to be used as prefix for typing actions."
+  :package-version '(telega . "0.8.255")
+  :type 'string
+  :group 'telega-symbol)
+
 ;; Symbols marking messages of some sort
 (when (fboundp 'define-fringe-bitmap)
   (define-fringe-bitmap 'telega-mark
-      (vector #b11111111) nil nil '(top periodic)))
+    (vector #b11111111) nil nil '(top periodic)))
 
 (defcustom telega-symbol-mark
   (propertize " " 'face 'custom-invalid)
@@ -2496,34 +2513,34 @@ Used in one line message inserter."
 
 (when (fboundp 'define-fringe-bitmap)
   (define-fringe-bitmap 'telega-mention
-      (vector #b01111110
-       #b01111110
-       #b11000011
-       #b11000011
-       #b11001111
-       #b10011111
-       #b10110011
-       #b10110011
-       #b10011111
-       #b11001110
-       #b11000000
-       #b11000001
-       #b01111111
-       #b01111110))
+    (vector #b01111110
+            #b01111110
+            #b11000011
+            #b11000011
+            #b11001111
+            #b10011111
+            #b10110011
+            #b10110011
+            #b10011111
+            #b11001110
+            #b11000000
+            #b11000001
+            #b01111111
+            #b01111110))
 
   (define-fringe-bitmap 'telega-reaction
-      (vector #b011000110
-       #b111101111
-       #b111111111
-       #b111111111
-       #b011111110
-       #b011111110
-       #b001111100
-       #b001111100
-       #b000111000
-       #b000111000
-       #b000010000
-       )))
+    (vector #b011000110
+            #b111101111
+            #b111111111
+            #b111111111
+            #b011111110
+            #b011111110
+            #b001111100
+            #b001111100
+            #b000111000
+            #b000111000
+            #b000010000
+            )))
 
 (defcustom telega-symbol-mention-mark
   (propertize "@" 'face 'telega-mention-count)
@@ -2549,6 +2566,38 @@ Used in one line message inserter."
     alarm
     attachment audio
     bell bulp
+    (button-close
+     (when (and telega-use-images (image-type-available-p 'svg))
+       (telega-etc-file-create-image "symbols/button-close.svg" 2)))
+    (button-left
+     (when (and telega-use-images (image-type-available-p 'svg))
+       (when-let ((bg-color (face-background 'default)))
+         (telega-create-image (telega-etc-file "symbols/button-left.svg") nil nil
+                              :scale 1.0
+                              :ascent 'center
+                              :background bg-color
+                              :mask `(heuristic ,(color-values bg-color))
+                              :height (telega-ch-height 1)))))
+    (button-right
+     (when (and telega-use-images (image-type-available-p 'svg))
+       (when-let ((bg-color (face-background 'default)))
+         (telega-create-image (telega-etc-file "symbols/button-right.svg") nil nil
+                              :scale 1.0
+                              :ascent 'center
+                              :background bg-color
+                              :mask `(heuristic ,(color-values bg-color))
+                              :height (telega-ch-height 1)))))
+    chat-list
+    (checkbox-off
+     (when (and telega-use-images (image-type-available-p 'svg))
+       (telega-etc-file-create-image "unchecked.svg" 2)))
+    (checkbox-on
+     (when (and telega-use-images (image-type-available-p 'svg))
+       (telega-etc-file-create-image "checked.svg" 2)))
+    (checkmark
+     (when (and telega-use-images (image-type-available-p 'svg))
+       (telega-svg-create-checkmark telega-symbol-checkmark
+                                    :stroke-width 1.0)))
     contact
     distance
     eye
@@ -2558,12 +2607,34 @@ Used in one line message inserter."
     leave-comment lightning lock location
     member multiple-folders
     pause pending phone photo pin poll play
+    (premium (when (and telega-use-images (image-type-available-p 'svg))
+               (telega-etc-file-create-image "symbols/premium.svg" 2)))
+    (radiobox-off
+     (when (and telega-use-images (image-type-available-p 'svg))
+       (telega-etc-file-create-image "radio.svg" 2)))
+    (radiobox-on
+     (when (and telega-use-images (image-type-available-p 'svg))
+       (telega-etc-file-create-image "radio-checked.svg" 2)))
+    (reaction (when (and telega-use-images (image-type-available-p 'svg))
+                (telega-etc-file-create-image "symbols/reaction.svg" 2)))
+    (reaction-mark (when (and telega-use-images (image-type-available-p 'svg))
+                     (telega-etc-file-create-image "symbols/reaction.svg" 2)))
+    (reply (when (and telega-use-images (image-type-available-p 'svg))
+             (telega-etc-file-create-image "symbols/reply.svg" 2)))
+    (reply-quote (when (and telega-use-images (image-type-available-p 'svg))
+                   (telega-etc-file-create-image "symbols/reply-quote.svg" 2)))
+    (right-arrow (when (and telega-use-images (image-type-available-p 'svg))
+                   (telega-etc-file-create-image "symbols/right-arrow.svg" 2)))
     (saved-messages-tag-end
      (when (and telega-use-images (image-type-available-p 'svg))
        (telega-create-image (telega-etc-file "symbols/tag-end.svg") nil nil
-                            :scale 1.0 :ascent 'center
-                            :height (telega-chars-xheight 1))))
+                            :scale 1.0
+                            :ascent 'center
+                            :height (telega-ch-height 1))))
     timer-clock
+    (typing
+     (when (and telega-use-images (image-type-available-p 'svg))
+       (telega-etc-file-create-image "symbols/typing.svg" 2)))
     video video-chat-active video-chat-passive
 
     "⏪" "⏩"
@@ -2590,328 +2661,328 @@ non-nil if symbol gets emojification."
   :group 'telega)
 
 (defface telega-shadow
-    '((t :inherit shadow))
+  '((t :inherit shadow))
   "Face used to display shadowed text in telega."
   :package-version '(telega . "0.8.111")
   :group 'telega-faces)
 
 (defface telega-link
-    '((t :inherit link :underline nil))
+  '((t :inherit link :underline nil))
   "Face to display various links."
   :group 'telega-faces)
 
 ;; NOTE: better to use :line-width (-2 . -2), but this is only in newer Emacs
 ;; see https://t.me/emacs_telega/22129
 (defface telega-box-button
-    `((((class color) (min-colors 88) (background light))
-       :foreground "RoyalBlue3"
-       :box (:line-width ,(if (version< emacs-version "28.0") -2 (cons -2 -2))
-             :color "RoyalBlue3" :style nil))
-      (((class color) (min-colors 88) (background dark))
-       :foreground "cyan1"
-       :box (:line-width ,(if (version< emacs-version "28.0") -2 (cons -2 -2))
-             :color "cyan1" :style nil))
-      (t :inherit highlight))
+  `((((class color) (min-colors 88) (background light))
+     :foreground "RoyalBlue3"
+     :box (:line-width ,(if (version< emacs-version "28.0") -2 (cons -2 -2))
+                       :color "RoyalBlue3" :style nil))
+    (((class color) (min-colors 88) (background dark))
+     :foreground "cyan1"
+     :box (:line-width ,(if (version< emacs-version "28.0") -2 (cons -2 -2))
+                       :color "cyan1" :style nil))
+    (t :inherit highlight))
   "Face used for telega buttons."
   :group 'telega-faces)
 
 (defface telega-box-button-active
-    '((((class color) (min-colors 88) (background light))
-       :inherit telega-box-button
-       :foreground "white" :background "RoyalBlue3")
-      (((class color) (min-colors 88) (background dark))
-       :foreground "white" :background "cyan1"
-       :inherit telega-box-button)
-      (t :inherit telega-box-button))
+  '((((class color) (min-colors 88) (background light))
+     :inherit telega-box-button
+     :foreground "white" :background "RoyalBlue3")
+    (((class color) (min-colors 88) (background dark))
+     :foreground "white" :background "cyan1"
+     :inherit telega-box-button)
+    (t :inherit telega-box-button))
   "Face used for active (cursor inside) telega buttons."
   :group 'telega-faces)
 
 (defface telega-blue
-    '((t :foreground "#2ca5e0"))
+  '((t :foreground "#2ca5e0"))
   "*Official blue color of telegram."
   :group 'telega-faces)
 
 (defface telega-enckey-00
-    '((t :foreground "#ffffff" :background "#ffffff"))
+  '((t :foreground "#ffffff" :background "#ffffff"))
   "Face used for encryption key"
   :group 'telega-faces)
 
 (defface telega-enckey-01
-    '((t :foreground "#d5e6f3" :background "#d5e6f3"))
+  '((t :foreground "#d5e6f3" :background "#d5e6f3"))
   "Face used for encryption key"
   :group 'telega-faces)
 
 (defface telega-enckey-10
-    '((t :foreground "#2d5775" :background "#2d5775"))
+  '((t :foreground "#2d5775" :background "#2d5775"))
   "Face used for encryption key"
   :group 'telega-faces)
 
 (defface telega-enckey-11
-    '((t :foreground "#2f99c9" :background "#2f99c9"))
+  '((t :foreground "#2f99c9" :background "#2f99c9"))
   "Face used for encryption key"
   :group 'telega-faces)
 
 (defface telega-filter-button-active
-    '((t :inherit default))
+  '((t :inherit default))
   "*Face to use for active custom filters."
   :group 'telega-faces)
 
 (defface telega-filter-button-inactive
-    '((t :inherit telega-shadow))
+  '((t :inherit telega-shadow))
   "*Face to use for inactive custom filters."
   :group 'telega-faces)
 
 (defface telega-filter-active
-    '((t :inherit bold))
+  '((t :inherit bold))
   "Face to emphasize active chat filter other then `telega-filter-default'."
   :group 'telega-faces)
 
 (defface telega-root-heading
-    '((((background light))
-       :background "light gray" :foreground "dim gray")
-      (((background dark))
-       :background "dim gray" :foreground "light gray"))
+  '((((background light))
+     :background "light gray" :foreground "dim gray")
+    (((background dark))
+     :background "dim gray" :foreground "light gray"))
   "Face used to display headings, such as GLOBAL SEARCH, in root buffer."
   :group 'telega-faces)
 
 (defface telega-chat-prompt
-    '((t :weight bold))
+  '((t :weight bold))
   "Face for chat input prompt"
   :group 'telega-faces)
 
 (defface telega-chat-input-attachment
-    '((t :inherit bold))
+  '((t :inherit bold))
   "Face for chat input attachments."
   :group 'telega-faces)
 
 (defface telega-unread-unmuted-modeline
-    '((t :inherit error))
+  '((t :inherit error))
   "Face used to display number of unread/unmuted messages in modeline."
   :group 'telega-faces)
 
 (defface telega-muted-count
-    `((t :inherit telega-shadow))
+  `((t :inherit telega-shadow))
   "Face to display count of messages in muted chats."
   :group 'telega-faces)
 
 (defface telega-unmuted-count
-    '((((class color) (background dark))
-       :foreground "RoyalBlue1")
-      (((class color) (background light))
-       :foreground "blue"))
+  '((((class color) (background dark))
+     :foreground "RoyalBlue1")
+    (((class color) (background light))
+     :foreground "blue"))
   "Face to display count messages in unmuted chats."
   :group 'telega-faces)
 
 (defface telega-mention-count
-    '((t :inherit telega-unmuted-count :weight bold))
+  '((t :inherit telega-unmuted-count :weight bold))
   "Face to display count of the mentions."
   :group 'telega-faces)
 
 (defface telega-username
-    '((((class color) (background dark))
-       :foreground "DodgerBlue")
-      (((class color) (background light))
-       :foreground "RoyalBlue")
-      (t :bold t))
+  '((((class color) (background dark))
+     :foreground "DodgerBlue")
+    (((class color) (background light))
+     :foreground "RoyalBlue")
+    (t :bold t))
   "Face to display username for chats/users."
   :group 'telega-faces)
 
 (defface telega-tracking
-    '((t :inherit telega-username))
+  '((t :inherit telega-username))
   "Face to display tracking mode-line notifications."
   :group 'telega-faces)
 
 (defface telega-entity-type-mention
-    '((t :inherit telega-username))
+  '((t :inherit telega-username))
   "Face to display @mentions."
   :group 'telega-faces)
 
 (defface telega-entity-type-hashtag
-    '((t :inherit telega-link))
+  '((t :inherit telega-link))
   "Face to display #hashtags."
   :group 'telega-faces)
 
 (defface telega-entity-type-cashtag
-    '((t :inherit telega-link))
+  '((t :inherit telega-link))
   "Face to display $USD cashtags"
   :group 'telega-faces)
 
 (defface telega-entity-type-botcommand
-    '((t :inherit telega-link))
+  '((t :inherit telega-link))
   "Face to display /command if there is bot in chat."
   :group 'telega-faces)
 
 (defface telega-entity-type-bold
-    '((t :inherit bold))
+  '((t :inherit bold))
   "Face to display bold text."
   :group 'telega-faces)
 
 (defface telega-entity-type-italic
-    '((t :inherit italic))
+  '((t :inherit italic))
   "Face to display italic text."
   :group 'telega-faces)
 
 (defface telega-entity-type-underline
-    '((t :inherit underline))
+  '((t :inherit underline))
   "Face to display underline text."
   :group 'telega-faces)
 
 (defface telega-entity-type-strikethrough
-    '((t :strike-through t))
+  '((t :strike-through t))
   "Face to display strikethrough text."
   :group 'telega-faces)
 
 (defface telega-entity-type-blockquote
-    '((t :inherit widget-single-line-field :extend t))
+  '((t :inherit widget-single-line-field :extend t))
   "Face to display block quote formatting."
   :group 'telega-faces)
 
 (defface telega-entity-type-code
-    '((t :inherit fixed-pitch-serif))
+  '((t :inherit fixed-pitch-serif))
   "Face to display code."
   :group 'telega-faces)
 
 (defface telega-entity-type-pre
-    '((t :inherit fixed-pitch-serif))
+  '((t :inherit fixed-pitch-serif))
   "Face to display text ala <pre> HTML tag."
   :group 'telega-faces)
 
 (defface telega-entity-type-texturl
-    '((t :inherit button))
+  '((t :inherit button))
   "Face to display urls."
   :group 'telega-faces)
 
 (defface telega-entity-type-spoiler
-    '((t :inherit default))
+  '((t :inherit default))
   "Face to display spoilers in the text."
   :group 'telega-faces)
 
 (defface telega-secret-title
-    '((t :foreground "#00b12c"))
+  '((t :foreground "#00b12c"))
   "Face to display title of secret chat in root buffer."
   :group 'telega-faces)
 
 (defface telega-msg-heading
-    '((((class color) (background light))
-       :background "gray85" :extend t)
-      (((class color) (background dark))
-       :background "gray25" :extend t)
-      (t :inherit widget-single-line-field :extend t))
+  '((((class color) (background light))
+     :background "gray85" :extend t)
+    (((class color) (background dark))
+     :background "gray25" :extend t)
+    (t :inherit widget-single-line-field :extend t))
   "Face to display messages header."
   :group 'telega-faces)
 
 (defface telega-msg-self-title
-    '((t :bold t))
+  '((t :bold t))
   "Face to display title of myself in chat buffers."
   :group 'telega-faces)
 
 (defface telega-msg-user-title
-    '((t nil))
+  '((t nil))
   "Face to display user title in chat buffers."
   :group 'telega-faces)
 
 (defface telega-msg-inline-reply
-    '((t :inherit (telega-msg-heading telega-shadow)))
+  '((t :inherit (telega-msg-heading telega-shadow)))
   "Face to highlight replies to messages."
   :group 'telega-faces)
 
 (defface telega-msg-inline-forward
-    '((t :inherit telega-msg-heading))
+  '((t :inherit telega-msg-heading))
   "Face to highlight message forwarding header."
   :group 'telega-faces)
 
 (defface telega-msg-deleted
-    '((t :inherit custom-invalid :extend t))
+  '((t :inherit custom-invalid :extend t))
   "Face used to display deleted messages."
   :package-version '(telega . "0.8.101")
   :group 'telega-faces)
 
 (defface telega-webpage-chat-link
-    '((t :background "gray85"))
+  '((t :background "gray85"))
   "Face to display `pageBlockChatLink' web page blocks"
   :group 'telega-faces)
 
 (defface telega-webpage-sitename
-    '((t :inherit telega-link :bold t))
+  '((t :inherit telega-link :bold t))
   "Face to display webpage's site_name."
   :group 'telega-faces)
 
 (defface telega-webpage-title
-    '((t :inherit bold))
+  '((t :inherit bold))
   "Face to display webpage's title."
   :group 'telega-faces)
 
 (defface telega-webpage-strike-through
-    '((t :strike-through t))
+  '((t :strike-through t))
   "Face to display strike through RichText."
   :group 'telega-faces)
 
 (defface telega-webpage-header
-    '((t :inherit telega-webpage-subheader :height 1.2))
+  '((t :inherit telega-webpage-subheader :height 1.2))
   "Face to display header in webpage instant view."
   :group 'telega-faces)
 
 (defface telega-webpage-subheader
-    '((t :inherit variable-pitch :weight bold :height 1.2))
+  '((t :inherit variable-pitch :weight bold :height 1.2))
   "Face to display subheader in webpage instant view."
   :group 'telega-faces)
 
 (defface telega-webpage-fixed
-    '((t :inherit fixed-pitch-serif))
+  '((t :inherit fixed-pitch-serif))
   "Face to display fixed text in webpage instant view."
   :group 'telega-faces)
 
 (defface telega-webpage-preformatted
-    '((t :inherit telega-webpage-fixed :background "gray85"))
+  '((t :inherit telega-webpage-fixed :background "gray85"))
   "Face to display preformatted text in webpage instant view."
   :group 'telega-faces)
 
 (defface telega-user-online-status
-    '((((class color) (background dark))
-       :foreground "green")
-      (((class color) (background light))
-       :foreground "cornflower blue")
-      (t :bold t))
+  '((((class color) (background dark))
+     :foreground "green")
+    (((class color) (background light))
+     :foreground "cornflower blue")
+    (t :bold t))
   "Face to display user status if online."
   :group 'telega-faces)
 
 (defface telega-user-non-online-status
-    '((t :inherit telega-shadow))
+  '((t :inherit telega-shadow))
   "Face to display user status if non-online."
   :group 'telega-faces)
 
 (defface telega-delim-face
-    '((t :inherit telega-shadow :height 0.5))
+  '((t :inherit telega-shadow :height 0.5))
   "Face used to display horizontal delimiters."
   :group 'telega-faces)
 
 (defface telega-button-highlight
-    '((t :inherit highlight))
+  '((t :inherit highlight))
   "Face used to highlight active button."
   :group 'telega-faces)
 
 (defface telega-msg-sponsored
-    '((t :inherit telega-shadow))
+  '((t :inherit telega-shadow))
   "Face to display sponsored message."
   :group 'telega-faces)
 
 (defface telega-topic-button
-    '((t :inherit telega-shadow))
+  '((t :inherit telega-shadow))
   "Face to display topic button in the rootbuf."
   :group 'telega-faces)
 
 (defface telega-describe-section-title
-    '((t :inherit (bold underline) :extend t))
+  '((t :inherit (bold underline) :extend t))
   "Face used for section title in help buffers."
   :group 'telega-faces)
 
 (defface telega-describe-subsection-title
-    '((t :inherit bold))
+  '((t :inherit bold))
   "Face used for subsection title in help buffers."
   :group 'telega-faces)
 
 (defface telega-describe-item-title
-    '((t :inherit (bold font-lock-function-name-face)))
+  '((t :inherit (bold font-lock-function-name-face)))
   "Face used for item title in help buffers."
   :group 'telega-faces)
 
