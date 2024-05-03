@@ -2594,10 +2594,10 @@ Used in one line message inserter."
     (checkbox-on
      (when (and telega-use-images (image-type-available-p 'svg))
        (telega-etc-file-create-image "checked.svg" 2)))
-    (checkmark
-     (when (and telega-use-images (image-type-available-p 'svg))
-       (telega-svg-create-checkmark telega-symbol-checkmark
-                                    :stroke-width 1.0)))
+    ;; (checkmark
+    ;;  (when (and telega-use-images (image-type-available-p 'svg))
+    ;;    (telega-svg-create-checkmark telega-symbol-checkmark
+    ;;                                 :stroke-width 1.0)))
     contact
     distance
     eye
