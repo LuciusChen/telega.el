@@ -2566,27 +2566,27 @@ Used in one line message inserter."
     alarm
     attachment audio
     bell bulp
-    (button-close
-     (when (and telega-use-images (image-type-available-p 'svg))
-       (telega-etc-file-create-image "symbols/button-close.svg" 2)))
+    ;; (button-close
+    ;;  (when (and telega-use-images (image-type-available-p 'svg))
+    ;;    (telega-etc-file-create-image "symbols/button-close.svg" 2)))
     (button-left
      (when (and telega-use-images (image-type-available-p 'svg))
        (when-let ((bg-color (face-background 'default)))
          (telega-create-image (telega-etc-file "symbols/button-left.svg") nil nil
-                              :scale 1.0
-                              :ascent 'center
-                              :background bg-color
-                              :mask `(heuristic ,(color-values bg-color))
-                              :height (telega-ch-height 1)))))
+           :scale 1.0
+           :ascent 'center
+           :background bg-color
+           :mask `(heuristic ,(color-values bg-color))
+           :height (telega-ch-height 1)))))
     (button-right
      (when (and telega-use-images (image-type-available-p 'svg))
        (when-let ((bg-color (face-background 'default)))
          (telega-create-image (telega-etc-file "symbols/button-right.svg") nil nil
-                              :scale 1.0
-                              :ascent 'center
-                              :background bg-color
-                              :mask `(heuristic ,(color-values bg-color))
-                              :height (telega-ch-height 1)))))
+           :scale 1.0
+           :ascent 'center
+           :background bg-color
+           :mask `(heuristic ,(color-values bg-color))
+           :height (telega-ch-height 1)))))
     chat-list
     (checkbox-off
      (when (and telega-use-images (image-type-available-p 'svg))
