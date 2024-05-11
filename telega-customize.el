@@ -2613,18 +2613,18 @@ Used in one line message inserter."
                 (telega-etc-file-create-image "symbols/reaction.svg" 2)))
     (reaction-mark (when (and telega-use-images (image-type-available-p 'svg))
                      (telega-etc-file-create-image "symbols/reaction.svg" 2)))
-    (reply (when (and telega-use-images (image-type-available-p 'svg))
-             (telega-etc-file-create-image "symbols/reply.svg" 2)))
-    (reply-quote (when (and telega-use-images (image-type-available-p 'svg))
-                   (telega-etc-file-create-image "symbols/reply-quote.svg" 2)))
+    ;; (reply (when (and telega-use-images (image-type-available-p 'svg))
+    ;;          (telega-etc-file-create-image "symbols/reply.svg" 2)))
+    ;; (reply-quote (when (and telega-use-images (image-type-available-p 'svg))
+    ;;                (telega-etc-file-create-image "symbols/reply-quote.svg" 2)))
     (right-arrow (when (and telega-use-images (image-type-available-p 'svg))
                    (telega-etc-file-create-image "symbols/right-arrow.svg" 2)))
     (saved-messages-tag-end
      (when (and telega-use-images (image-type-available-p 'svg))
        (telega-create-image (telega-etc-file "symbols/tag-end.svg") nil nil
-                            :scale 1.0
-                            :ascent 'center
-                            :height (telega-ch-height 1))))
+         :scale 1.0
+         :ascent 'center
+         :height (telega-ch-height 1))))
     timer-clock
     (typing
      (when (and telega-use-images (image-type-available-p 'svg))
