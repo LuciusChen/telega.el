@@ -963,7 +963,7 @@ See `puny-decode-domain' for details."
                           (telega-ins (telega--desurrogate-apply text))
                           (telega-ins--move-to-column
                            (- telega-chat-fill-column (string-width codeblock)))
-                          (telega-ins--with-face (nconc (list 'normal) vbar-face)
+                          (telega-ins--with-face vbar-face
                             (telega-ins codeblock))
                           (telega-ins--move-to-column (+ 2 telega-chat-fill-column)))))))
           (list 'telega-display repr
