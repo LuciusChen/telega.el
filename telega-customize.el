@@ -276,24 +276,23 @@ cell of endings for the button with LABEL."
 
 (defcustom telega-builtin-palettes-alist
   ;; Palettes for builtin colors:
-  ;;  red, orange, purple/voilet, green, cyan, blue, pink
+  ;;  red, orange, purple/violet, green, cyan, blue, pink
   '((light
-     ((:outline "#990000") (:foreground "#aa0000")     (:background "#d1c7c7"))
-     ((:outline "#994c00") (:foreground "DarkOrange3") (:background "#d1ccc7"))
-     ((:outline "#4e1781") (:foreground "purple3")     (:background "#cdc7d1"))
-     ((:outline "#006000") (:foreground "#007000")     (:background "#c7d1c7"))
-     ((:outline "#007070") (:foreground "cyan4")       (:background "#cacfcf"))
-     ((:outline "#003365") (:foreground "#014d98")     (:background "#c6cbd1"))
-     ((:outline "#5e0736") (:foreground "DeepPink3")   (:background "#d1c7cb")))
+     ((:outline "#a07a7a") (:foreground "#a85555") )
+     ((:outline "#a07850") (:foreground "#b07a50") )
+     ((:outline "#7a579a") (:foreground "#8a70a0") )
+     ((:outline "#6a8a6a") (:foreground "#6a9a6a") )
+     ((:outline "#6a9a9a") (:foreground "#70a0a0") )
+     ((:outline "#6a7a9a") (:foreground "#6a86a0") )
+     ((:outline "#a06a82") (:foreground "#a07085") ))
     (dark
-     ((:outline "#ff0a0a") (:foreground "#dd0000") (:background "#3d2828"))
-     ((:outline "#ff8d1e") (:foreground "DarkOrange2") (:background "#2c2620"))
-     ((:outline "#f6c2f6") (:foreground "violet") (:background "#2e1e2e"))
-     ((:outline "#0aff0a") (:foreground "#00dd00") (:background "#1e2e1e"))
-     ((:outline "#00f5f6") (:foreground "cyan3") (:background "#234242"))
-     ((:outline "#3e9efd") (:foreground "#168afd") (:background "#1e262e"))
-     ((:outline "#fabddd") (:foreground "#f688c3") (:background "#470528"))
-     ))
+     ((:outline "#b07070") (:foreground "#a85555") )
+     ((:outline "#b09060") (:foreground "#b07a50") )
+     ((:outline "#b090b0") (:foreground "#a070a0") )
+     ((:outline "#70b070") (:foreground "#55a055") )
+     ((:outline "#70a0a0") (:foreground "#55a0a0") )
+     ((:outline "#7090b0") (:foreground "#6080a0") )
+     ((:outline "#b080a0") (:foreground "#a07085") )))
   "Alist of builtin colors for light and dark themes."
   :package-version '(telega . "0.8.292")
   :type '(alist :key-type

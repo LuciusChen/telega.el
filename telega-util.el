@@ -1007,12 +1007,9 @@ buffer) or a string."
                    (unless (telega--text-entity-at-newline-p ent object)
                      (telega-ins "\n"))
                    (telega-ins--with-outline-palette palette
-                     (telega-ins--with-face (list 'bold 'underline
+                     (telega-ins--with-face (list 'bold
                                                   (assq :foreground palette))
-                       (telega-ins (telega-symbol 'codeblock))
-                       (telega-ins-prefix " "
-                         (telega-ins
-                          (capitalize (telega-tl-str ent-type :language)))))
+                       (telega-ins (concat (upcase (telega-tl-str ent-type :language)) " >")))
                      (telega-ins "\n")
                      (telega-ins--with-face 'telega-entity-type-code
                        (telega-ins (telega-strip-newlines
