@@ -389,6 +389,33 @@ FORCE is used for testing only, should not be used in real code."
     (telega-notifications--notify
      (nconc notargs telega-notifications-call-args))))
 
+(defun telega--notification-messages-ring-index (msg)
+  "Return notifications MSG index inside `telega--notifications-messages-ring'."
+  (catch 'found
+    (dotimes (ind (ring-length telega--notification-messages-ring))
+      (let ((ring-msg (ring-ref telega--notification-messages-ring ind)))
+        (when (and (eq (plist-get msg :chat_id)
+                       (plist-get ring-msg :chat_id))
+                   (eq (plist-get msg :id)
+                       (plist-get ring-msg :id)))
+          (throw 'found ind))))))
+
+(defun telega--notifications-read-remove (&rest _)
+  "Function to remove read message."
+  (dolist (msg (ring-elements telega--notification-messages-ring))
+    (when (telega-msg-observable-p msg)
+      (when-let ((ind (telega--notification-messages-ring-index msg)))
+        (ring-remove telega--notification-messages-ring ind)))))
+
+(defun telega--notifications-goto-remove (&rest _)
+  (dolist (msg (ring-elements telega--notification-messages-ring))
+    (when (eq (plist-get msg :id) (plist-get (telega-msg-at (point)) :id))
+      (when-let ((ind (telega--notification-messages-ring-index msg)))
+        (ring-remove telega--notification-messages-ring ind)))))
+
+(advice-add 'telega-chatbuf--msg-view :after 'telega--notifications-read-remove)
+(advice-add 'telega-msg-goto :after 'telega--notifications-goto-remove)
+
 ;;;###autoload
 (define-minor-mode telega-notifications-mode
   "Telega D-Bus notifications."
