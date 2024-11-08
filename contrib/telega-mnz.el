@@ -285,17 +285,22 @@ language-detection is used in this case, used for
     (kill-local-variable 'parse-sexp-lookup-properties)
     ))
 
-(defun telega-mnz--e-t-p (old-e-t-p ent-type text)
-  "Highligh TEXT in case of code block with defined language."
-  (when (and telega-msg--current
+(defun telega-mnz--text-entity-apply (ent &optional object)
+  "Highligh OBJECT in case of code block with defined language."
+  (when (and object
+             (memq (telega--tl-type (plist-get ent :type))
+                   telega-mnz-entity-types)
+             telega-msg--current
              (with-telega-chatbuf (telega-msg-chat telega-msg--current 'offline)
-                                  telega-mnz-mode)
-             (memq (telega--tl-type ent-type) telega-mnz-entity-types))
-    (when-let ((mode (telega-mnz--mode-for-language
-                      (telega-tl-str ent-type :language) text)))
-      (setq text (telega-mnz--mode-render-text mode text))))
-
-  (funcall old-e-t-p ent-type text))
+               telega-mnz-mode))
+    (when-let* ((beg (plist-get ent :offset))
+                (end (+ (plist-get ent :offset) (plist-get ent :length)))
+                (text (telega--desurrogate-apply (substring object beg end)))
+                (mode (telega-mnz--mode-for-language
+                       (telega-tl-str (plist-get ent :type) :language) text)))
+      (put-text-property beg end 'telega-display
+                         (telega-mnz--mode-render-text mode text)
+                         object))))
 
 (defun telega-mnz-edit-cancel ()
   "Cancel editing the current message."
@@ -356,7 +361,7 @@ To cancel, hit %s.")
   (interactive (list (telega-msg-at (point)) current-prefix-arg))
 
   (if-let* ((cb-ent (when (with-telega-chatbuf (telega-msg-chat msg 'offline)
-                                               telega-mnz-mode)
+                            telega-mnz-mode)
                       (get-text-property (point) :tl-entity)))
             (code-block-p (memq (telega--tl-type (plist-get cb-ent :type))
                                 telega-mnz-entity-types))
@@ -407,11 +412,11 @@ To cancel, hit %s.")
 
   (telega-chatbuf-input-insert
    (telega-string-as-markup
-    code (format "code: %s" language)
-    (lambda (code-text)
-      (telega-fmt-text (telega-strip-newlines code-text)
-                       (list :@type "textEntityTypePreCode"
-                             :language language)))))
+       code (format "code: %s" language)
+       (lambda (code-text)
+         (telega-fmt-text (telega-strip-newlines code-text)
+                          (list :@type "textEntityTypePreCode"
+                                :language language)))))
   (telega-chatbuf-input-insert "\n"))
 
 (defun telega-mnz-chatbuf-attach-code (language)
@@ -470,8 +475,8 @@ ARG is passed directly to function `telega-mnz-mode'."
         (telega-mnz-mode -1)))))
 
 
-(advice-add 'telega--entity-type-to-text-props
-            :around #'telega-mnz--e-t-p)
+(advice-add 'telega--text-entity-apply
+            :before #'telega-mnz--text-entity-apply)
 
 (define-key telega-prefix-map (kbd "'") #'telega-mnz-attach-region-as-code)
 (define-key telega-chat-mode-map (kbd "C-c '") #'telega-mnz-chatbuf-attach-code)
