@@ -2763,8 +2763,7 @@ argument - MSG to insert additional information after header."
                         ;; - via @bot link uses :action
                         (or (telega-button--action button)
                             (telega-describe-msg-sender sender))))
-      (telega-ins--with-face
-          (telega-face-with-palette 'telega-msg-heading palette :background)
+      (telega-ins--with-face 'telega-msg-heading
         (telega-ins--with-attrs (list :max (- dwidth (telega-current-column))
                                       :align 'left
                                       :elide t
