@@ -278,21 +278,21 @@ cell of endings for the button with LABEL."
   ;; Palettes for builtin colors:
   ;;  red, orange, purple/violet, green, cyan, blue, pink
   '((light
-     ((:outline "#a07a7a") (:foreground "#a85555") )
-     ((:outline "#a07850") (:foreground "#b07a50") )
-     ((:outline "#7a579a") (:foreground "#8a70a0") )
-     ((:outline "#6a8a6a") (:foreground "#6a9a6a") )
-     ((:outline "#6a9a9a") (:foreground "#70a0a0") )
-     ((:outline "#6a7a9a") (:foreground "#6a86a0") )
-     ((:outline "#a06a82") (:foreground "#a07085") ))
+     ((:outline "#d32f2f") (:foreground "#c62828"))
+     ((:outline "#f57c00") (:foreground "#ef6c00"))
+     ((:outline "#8e24aa") (:foreground "#7b1fa2"))
+     ((:outline "#388e3c") (:foreground "#2e7d32"))
+     ((:outline "#0288d1") (:foreground "#0277bd"))
+     ((:outline "#1976d2") (:foreground "#1565c0"))
+     ((:outline "#d81b60") (:foreground "#c2185b")))
     (dark
-     ((:outline "#b07070") (:foreground "#a85555") )
-     ((:outline "#b09060") (:foreground "#b07a50") )
-     ((:outline "#b090b0") (:foreground "#a070a0") )
-     ((:outline "#70b070") (:foreground "#55a055") )
-     ((:outline "#70a0a0") (:foreground "#55a0a0") )
-     ((:outline "#7090b0") (:foreground "#6080a0") )
-     ((:outline "#b080a0") (:foreground "#a07085") )))
+     ((:outline "#ef9a9a") (:foreground "#e57373"))
+     ((:outline "#ffe0b2") (:foreground "#ffcc80"))
+     ((:outline "#ce93d8") (:foreground "#ba68c8"))
+     ((:outline "#a5d6a7") (:foreground "#81c784"))
+     ((:outline "#b2ebf2") (:foreground "#80deea"))
+     ((:outline "#90caf9") (:foreground "#64b5f6"))
+     ((:outline "#f8bbd0") (:foreground "#f48fb1"))))
   "Alist of builtin colors for light and dark themes."
   :package-version '(telega . "0.8.292")
   :type '(alist :key-type
