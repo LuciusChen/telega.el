@@ -276,23 +276,24 @@ cell of endings for the button with LABEL."
 
 (defcustom telega-builtin-palettes-alist
   ;; Palettes for builtin colors:
-  ;;  red, orange, purple/violet, green, cyan, blue, pink
+  ;;  red, orange, purple/voilet, green, cyan, blue, pink
   '((light
-     ((:outline "#d32f2f") (:foreground "#c62828"))
-     ((:outline "#f57c00") (:foreground "#ef6c00"))
-     ((:outline "#8e24aa") (:foreground "#7b1fa2"))
-     ((:outline "#388e3c") (:foreground "#2e7d32"))
-     ((:outline "#0288d1") (:foreground "#0277bd"))
-     ((:outline "#1976d2") (:foreground "#1565c0"))
-     ((:outline "#d81b60") (:foreground "#c2185b")))
+     ((:outline "#990000") (:foreground "#aa0000")     (:background "#d1c7c7"))
+     ((:outline "#994c00") (:foreground "DarkOrange3") (:background "#d1ccc7"))
+     ((:outline "#4e1781") (:foreground "purple3")     (:background "#cdc7d1"))
+     ((:outline "#006000") (:foreground "#007000")     (:background "#c7d1c7"))
+     ((:outline "#007070") (:foreground "cyan4")       (:background "#cacfcf"))
+     ((:outline "#003365") (:foreground "#014d98")     (:background "#c6cbd1"))
+     ((:outline "#5e0736") (:foreground "DeepPink3")   (:background "#d1c7cb")))
     (dark
-     ((:outline "#ef9a9a") (:foreground "#e57373"))
-     ((:outline "#ffe0b2") (:foreground "#ffcc80"))
-     ((:outline "#ce93d8") (:foreground "#ba68c8"))
-     ((:outline "#a5d6a7") (:foreground "#81c784"))
-     ((:outline "#b2ebf2") (:foreground "#80deea"))
-     ((:outline "#90caf9") (:foreground "#64b5f6"))
-     ((:outline "#f8bbd0") (:foreground "#f48fb1"))))
+     ((:outline "#ff0a0a") (:foreground "#dd0000") (:background "#3d2828"))
+     ((:outline "#ff8d1e") (:foreground "DarkOrange2") (:background "#2c2620"))
+     ((:outline "#f6c2f6") (:foreground "violet") (:background "#2e1e2e"))
+     ((:outline "#0aff0a") (:foreground "#00dd00") (:background "#1e2e1e"))
+     ((:outline "#00f5f6") (:foreground "cyan3") (:background "#234242"))
+     ((:outline "#3e9efd") (:foreground "#168afd") (:background "#1e262e"))
+     ((:outline "#fabddd") (:foreground "#f688c3") (:background "#470528"))
+     ))
   "Alist of builtin colors for light and dark themes."
   :package-version '(telega . "0.8.292")
   :type '(alist :key-type
@@ -2603,10 +2604,10 @@ Used in one line message inserter."
                  (telega-svg-create-vertical-bar
                   0.2 0 telega-symbol-vbar-left
                   `(heuristic ,(color-values (face-background 'default))))))
-    ;; (verified (when (and telega-use-images (image-type-available-p 'svg))
-    ;;             (telega-etc-file-create-image "verified.svg" 2)))
-    ;; (vertical-bar (when (and telega-use-images (image-type-available-p 'svg))
-    ;;                 (telega-svg-create-vertical-bar)))
+    (verified (when (and telega-use-images (image-type-available-p 'svg))
+                (telega-etc-file-create-image "verified.svg" 2)))
+    (vertical-bar (when (and telega-use-images (image-type-available-p 'svg))
+                    (telega-svg-create-vertical-bar)))
     (horizontal-bar (when (and telega-use-images (image-type-available-p 'svg))
                       (telega-svg-create-horizontal-bar)))
     (underline-bar (when (and telega-use-images (image-type-available-p 'svg))
@@ -2615,9 +2616,9 @@ Used in one line message inserter."
     alarm
     attachment audio
     bell boost bulp
-    ;; (button-close
-    ;;  (when (and telega-use-images (image-type-available-p 'svg))
-    ;;    (telega-etc-file-create-image "symbols/button-close.svg" 2)))
+    (button-close
+     (when (and telega-use-images (image-type-available-p 'svg))
+       (telega-etc-file-create-image "symbols/button-close.svg" 2)))
     (button-left
      (when (and telega-use-images (image-type-available-p 'svg))
        (when-let ((bg-color (face-background 'default)))
@@ -2643,24 +2644,24 @@ Used in one line message inserter."
     (checkbox-on
      (when (and telega-use-images (image-type-available-p 'svg))
        (telega-etc-file-create-image "checked.svg" 2)))
-    ;; (checkmark
-    ;;  (when (and telega-use-images (image-type-available-p 'svg))
-    ;;    (telega-svg-create-checkmark telega-symbol-checkmark
-    ;;      :stroke-width 1.0)))
+    (checkmark
+     (when (and telega-use-images (image-type-available-p 'svg))
+       (telega-svg-create-checkmark telega-symbol-checkmark
+         :stroke-width 1.0)))
     contact
     distance
     eye
     failed favorite flames folder
-    ;; (forum (when (and telega-use-images (image-type-available-p 'svg))
-    ;;          (telega-etc-file-create-image "symbols/forum.svg" 2)))
+    (forum (when (and telega-use-images (image-type-available-p 'svg))
+             (telega-etc-file-create-image "symbols/forum.svg" 2)))
     (forward (when (and telega-use-images (image-type-available-p 'svg))
                (telega-etc-file-create-image "symbols/forward.svg" 2)))
     game
-    ;; (heavy-checkmark
-    ;;  (when (and telega-use-images (image-type-available-p 'svg))
-    ;;    (telega-svg-create-checkmark telega-symbol-heavy-checkmark
-    ;;      :double-p t
-    ;;      :stroke-width 1.5)))
+    (heavy-checkmark
+     (when (and telega-use-images (image-type-available-p 'svg))
+       (telega-svg-create-checkmark telega-symbol-heavy-checkmark
+         :double-p t
+         :stroke-width 1.5)))
     invoice
     leave-comment lightning lock location
     member multiple-folders
@@ -2672,7 +2673,7 @@ Used in one line message inserter."
        (telega-etc-file-create-image "outline-open.svg" 1)))
     pause pending phone photo pin poll play
     (premium (when (and telega-use-images (image-type-available-p 'svg))
-               (telega-etc-file-create-image "symbols/premium.svg" 2)))
+                (telega-etc-file-create-image "symbols/premium.svg" 2)))
     (radiobox-off
      (when (and telega-use-images (image-type-available-p 'svg))
        (telega-etc-file-create-image "radio.svg" 2)))
@@ -2683,18 +2684,18 @@ Used in one line message inserter."
                 (telega-etc-file-create-image "symbols/reaction.svg" 2)))
     (reaction-mark (when (and telega-use-images (image-type-available-p 'svg))
                      (telega-etc-file-create-image "symbols/reaction.svg" 2)))
-    ;; (reply (when (and telega-use-images (image-type-available-p 'svg))
-    ;;          (telega-etc-file-create-image "symbols/reply.svg" 2)))
-    ;; (reply-quote (when (and telega-use-images (image-type-available-p 'svg))
-    ;;                (telega-etc-file-create-image "symbols/reply-quote.svg" 2)))
+    (reply (when (and telega-use-images (image-type-available-p 'svg))
+             (telega-etc-file-create-image "symbols/reply.svg" 2)))
+    (reply-quote (when (and telega-use-images (image-type-available-p 'svg))
+                   (telega-etc-file-create-image "symbols/reply-quote.svg" 2)))
     (right-arrow (when (and telega-use-images (image-type-available-p 'svg))
                    (telega-etc-file-create-image "symbols/right-arrow.svg" 2)))
-    ;; (saved-messages-tag-end
-    ;;  (when (and telega-use-images (image-type-available-p 'svg))
-    ;;    (telega-create-image (telega-etc-file "symbols/tag-end.svg") nil nil
-    ;;      :scale 1.0
-    ;;      :ascent 'center
-    ;;      :height (telega-ch-height 1))))
+    (saved-messages-tag-end
+     (when (and telega-use-images (image-type-available-p 'svg))
+       (telega-create-image (telega-etc-file "symbols/tag-end.svg") nil nil
+         :scale 1.0
+         :ascent 'center
+         :height (telega-ch-height 1))))
     (story
      (when (and telega-use-images (image-type-available-p 'svg))
        (telega-etc-file-create-image "symbols/story.svg" 2)))
