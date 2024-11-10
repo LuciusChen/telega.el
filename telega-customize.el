@@ -302,13 +302,6 @@ cell of endings for the button with LABEL."
                 :value-type (repeat (list string)))
   :group 'telega)
 
-(defcustom telega-palette-light-saturation-alist
-  '((:background (light 0.8 0.1) (dark 0.2 0.1))
-    (:outline (light 0.9 0.1) (dark 0.1 0.1)))
-  "Ligthness and saturation specification for."
-  :type 'alist
-  )
-
 (defcustom telega-palette-context-ignore-list '(msg-header)
   "List of `telega-palette-context' values to ignore."
   :type '(list symbol)
@@ -531,45 +524,6 @@ then this number of seconds."
 (defcustom telega-animation-download-saved nil
   "*Non-nil to automatically download saved animations."
   :type 'boolean
-  :group 'telega)
-
-(defcustom language-icon-alist
-  '(("java" . (nerd-icons-devicon "nf-dev-java"))
-    ("python" . (nerd-icons-devicon "nf-dev-python"))
-    ("rust" . (nerd-icons-devicon "nf-dev-rust"))
-    ("emacs-lisp" . (nerd-icons-sucicon "nf-custom-emacs"))
-    ("elisp" . (nerd-icons-sucicon "nf-custom-emacs"))
-    ("js" . (nerd-icons-devicon "nf-dev-javascript"))
-    ("javascript" . (nerd-icons-devicon "nf-dev-javascript"))
-    ("json" . (nerd-icons-mdicon "nf-md-code_json"))
-    ("lisp" . (nerd-icons-sucicon "nf-custom-common_lisp"))
-    ("shell" . (nerd-icons-sucicon "nf-seti-shell"))
-    ("bash" . (nerd-icons-mdicon "nf-md-bash"))
-    ("lua" . (nerd-icons-sucicon "nf-seti-lua"))
-    ("typescript" . (nerd-icons-sucicon "nf-seti-typescript"))
-    ("zig" . (nerd-icons-sucicon "nf-seti-zig"))
-    ("c" . (nerd-icons-sucicon "nf-seti-c"))
-    ("clojure" . (nerd-icons-devicon "nf-dev-clojure"))
-    ("csharp" . (nerd-icons-sucicon "nf-seti-c_sharp"))
-    ("c++" . (nerd-icons-sucicon "nf-seti-c_sharp"))
-    ("css" . (nerd-icons-devicon "nf-dev-css3"))
-    ("dart" . (nerd-icons-devicon "nf-dev-dart"))
-    ("diff" . (nerd-icons-octicon "nf-oct-file_diff"))
-    ("erlang" . (nerd-icons-devicon "nf-dev-erlang"))
-    ("go" . (nerd-icons-sucicon "nf-seti-go"))
-    ("groovy" . (nerd-icons-devicon "nf-dev-groovy"))
-    ("haskell" . (nerd-icons-devicon "nf-dev-haskell"))
-    ("html" . (nerd-icons-devicon "nf-dev-html5"))
-    ("kotlin" . (nerd-icons-sucicon "nf-seti-kotlin"))
-    ("org" . (nerd-icons-sucicon "nf-custom-orgmode"))
-    ("perl" . (nerd-icons-devicon "nf-dev-perl"))
-    ("php" . (nerd-icons-devicon "nf-dev-php"))
-    ("ruby" . (nerd-icons-devicon "nf-dev-ruby"))
-    ("scala" . (nerd-icons-devicon "nf-dev-scala"))
-    ("sql" . (nerd-icons-devicon "nf-dev-database"))
-    ("swift" . (nerd-icons-devicon "nf-dev-swift")))
-  "Alist mapping programming languages to icon functions and arguments."
-  :type 'string
   :group 'telega)
 
 (defcustom telega-avatar-factors-alist
@@ -905,7 +859,7 @@ Insert MUST return non-nil if something has been inserted."
         ;; NOTE: all folders has "Custom" icon name, to avoid icon
         ;; being displayed with folder name we exclude "Custom" from
         ;; the list
-                                        ;        (cons "Custom"   "📁")
+;        (cons "Custom"   "📁")
         (cons "Setup"    "📋")
         (cons "Cat"      "🐱")
         (cons "Crown"    "👑")
@@ -923,11 +877,11 @@ Insert MUST return non-nil if something has been inserted."
         (cons "Work"     "💼")
         (cons "Airplane" "✈️️")
         (cons "Book"     "📖")
-                                        ;        (cons "Light")
+;        (cons "Light")
         (cons "Like"     "👍")
         (cons "Money"    "💰")
         (cons "Note"     "🗒️")
-                                        ;        (cons "Palette")
+;        (cons "Palette")
         )
   "Alist of symbols to be used as folder icons instead of `telega-symbol-folder'.
 See list of all available icon names in `telega-folder-icon-names'."
@@ -995,10 +949,10 @@ Possible arguments:
 
 (defcustom telega-chat-format-plist-for-completion
   (list ;:with-folders-insexp 'telega-chat-folders-insexp
-   :with-title-faces-p t
-   :with-username-p 'telega-username
-   :with-unread-trail-p t
-   :with-status-icons-trail-p t)
+        :with-title-faces-p t
+        :with-username-p 'telega-username
+        :with-unread-trail-p t
+        :with-status-icons-trail-p t)
   "Formatting for the chat button while performing read with completions.
 Used in the `telega-msg-sender-title-for-completion' function."
   :package-version '(telega . "0.8.255")
@@ -1759,7 +1713,7 @@ See `mode-line-buffer-identification'."
      ;; is displayed last
      (telega-chatbuf-footer-ins-aux-plist
       :with-avatar-p telega-chat-show-avatars)
-     )
+    )
   "*Inserter sexp for the chatbuf's footer."
   :package-version '(telega . "0.8.256")
   :type 'sexp
@@ -2429,17 +2383,17 @@ If nil, then user's online status is not displayed."
   :type 'string
   :group 'telega-symbol)
 
-(defcustom telega-symbol-reply "➦"
+(defcustom telega-symbol-reply "-'"
   "Symbol used to for replies."
   :type 'string
   :group 'telega-symbol)
 
-(defcustom telega-symbol-reply-quote "➠"
+(defcustom telega-symbol-reply-quote "-\""
   "Symbol used to for replies with quotes."
   :type 'string
   :group 'telega-symbol)
 
-(defcustom telega-symbol-forward "⎋"
+(defcustom telega-symbol-forward (compose-chars ?🗩 ?🠒)
   "Symbol used to display forwarding."
   :type 'string
   :group 'telega-symbol)
@@ -2515,7 +2469,7 @@ By default `(?+ . ?>)' is used resulting in +++++> progress bar."
   :type 'string
   :group 'telega-symbol)
 
-(defcustom telega-symbol-reaction (propertize "❤" 'face 'telega-mention-count)
+(defcustom telega-symbol-reaction "💟"
   "Symbol used to display reactions."
   :type 'string
   :group 'telega-symbol)
@@ -2632,7 +2586,7 @@ Used in one line message inserter."
   :type 'string
   :group 'telega-symbol)
 
-(defcustom telega-symbol-reaction-mark "❤"
+(defcustom telega-symbol-reaction-mark telega-symbol-reaction
   "*Symbol used to mark messages which contains unread reaction."
   :package-version '(telega . "0.8.13")
   :type 'string
@@ -2645,6 +2599,8 @@ Used in one line message inserter."
                   `(heuristic ,(color-values (face-background 'default))))))
     (verified (when (and telega-use-images (image-type-available-p 'svg))
                 (telega-etc-file-create-image "verified.svg" 2)))
+    (vertical-bar (when (and telega-use-images (image-type-available-p 'svg))
+                    (telega-svg-create-vertical-bar)))
     (horizontal-bar (when (and telega-use-images (image-type-available-p 'svg))
                       (telega-svg-create-horizontal-bar)))
     (underline-bar (when (and telega-use-images (image-type-available-p 'svg))
@@ -2681,15 +2637,24 @@ Used in one line message inserter."
     (checkbox-on
      (when (and telega-use-images (image-type-available-p 'svg))
        (telega-etc-file-create-image "checked.svg" 2)))
-    ;; (checkmark
-    ;;  (when (and telega-use-images (image-type-available-p 'svg))
-    ;;    (telega-svg-create-checkmark telega-symbol-checkmark
-    ;;                                 :stroke-width 1.0)))
+    (checkmark
+     (when (and telega-use-images (image-type-available-p 'svg))
+       (telega-svg-create-checkmark telega-symbol-checkmark
+         :stroke-width 1.0)))
     contact
     distance
     eye
     failed favorite flames folder
+    (forum (when (and telega-use-images (image-type-available-p 'svg))
+             (telega-etc-file-create-image "symbols/forum.svg" 2)))
+    (forward (when (and telega-use-images (image-type-available-p 'svg))
+               (telega-etc-file-create-image "symbols/forward.svg" 2)))
     game
+    (heavy-checkmark
+     (when (and telega-use-images (image-type-available-p 'svg))
+       (telega-svg-create-checkmark telega-symbol-heavy-checkmark
+         :double-p t
+         :stroke-width 1.5)))
     invoice
     leave-comment lightning lock location
     member multiple-folders
@@ -2701,7 +2666,7 @@ Used in one line message inserter."
        (telega-etc-file-create-image "outline-open.svg" 1)))
     pause pending phone photo pin poll play
     (premium (when (and telega-use-images (image-type-available-p 'svg))
-               (telega-etc-file-create-image "symbols/premium.svg" 2)))
+                (telega-etc-file-create-image "symbols/premium.svg" 2)))
     (radiobox-off
      (when (and telega-use-images (image-type-available-p 'svg))
        (telega-etc-file-create-image "radio.svg" 2)))
@@ -2712,10 +2677,10 @@ Used in one line message inserter."
                 (telega-etc-file-create-image "symbols/reaction.svg" 2)))
     (reaction-mark (when (and telega-use-images (image-type-available-p 'svg))
                      (telega-etc-file-create-image "symbols/reaction.svg" 2)))
-    ;; (reply (when (and telega-use-images (image-type-available-p 'svg))
-    ;;          (telega-etc-file-create-image "symbols/reply.svg" 2)))
-    ;; (reply-quote (when (and telega-use-images (image-type-available-p 'svg))
-    ;;                (telega-etc-file-create-image "symbols/reply-quote.svg" 2)))
+    (reply (when (and telega-use-images (image-type-available-p 'svg))
+             (telega-etc-file-create-image "symbols/reply.svg" 2)))
+    (reply-quote (when (and telega-use-images (image-type-available-p 'svg))
+                   (telega-etc-file-create-image "symbols/reply-quote.svg" 2)))
     (right-arrow (when (and telega-use-images (image-type-available-p 'svg))
                    (telega-etc-file-create-image "symbols/right-arrow.svg" 2)))
     (saved-messages-tag-end
