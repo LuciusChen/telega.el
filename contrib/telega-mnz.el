@@ -131,7 +131,7 @@ See docstring for `display-buffer' for the value meaning."
     (kotlin . kotlin-mode)              ; not in language-detection
     (latex . latex-mode)
     (lisp . lisp-mode)
-    ;; (lua . lua-mode)
+    (lua . lua-mode)
     (matlab . matlab-mode)
     (objc . objc-mode)
     (octave . octave-mode)              ; not in language-detection
@@ -143,7 +143,7 @@ See docstring for `display-buffer' for the value meaning."
     (python . python-mode)
     (r . ess-r-mode)
     (ruby . ruby-mode)
-    ;; (rust . rust-mode)
+    (rust . rust-mode)
     (scala . scala-mode)
     (shell . sh-mode)
     (smalltalk . smalltalk-mode)
@@ -412,11 +412,11 @@ To cancel, hit %s.")
 
   (telega-chatbuf-input-insert
    (telega-string-as-markup
-       code (format "code: %s" language)
-       (lambda (code-text)
-         (telega-fmt-text (telega-strip-newlines code-text)
-                          (list :@type "textEntityTypePreCode"
-                                :language language)))))
+    code (format "code: %s" language)
+    (lambda (code-text)
+      (telega-fmt-text (telega-strip-newlines code-text)
+                       (list :@type "textEntityTypePreCode"
+                             :language language)))))
   (telega-chatbuf-input-insert "\n"))
 
 (defun telega-mnz-chatbuf-attach-code (language)

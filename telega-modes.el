@@ -494,8 +494,7 @@ Return filename of the generated icon."
   :type 'telega-msg-temex
   :options '((and (not outgoing)
                   (or (type Animation Sticker AnimatedEmoji Gift)
-                      (link-preview Animation)
-                      (link-preview Sticker))))
+                      (link-preview Animation Sticker))))
   :group 'telega-modes)
 
 (defcustom telega-autoplay-custom-emojis 10
@@ -1216,8 +1215,9 @@ Return patron info, or nil if SENDER is not a telega patron."
                         (telega-palette-context 'avatar)
                         (svg-color
                          (telega-color-name-as-hex-2digits
-                          (telega-palette-attr
-                           (telega-msg-sender-palette sender) :foreground))))
+                          (or (telega-palette-attr
+                               (telega-msg-sender-palette sender) :foreground)
+                              (face-foreground 'default)))))
                    (telega-svg-telega-logo
                     svg ear-w
                     :transform (format "scale(-1, 1) translate(-%f, %f)"

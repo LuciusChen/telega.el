@@ -379,7 +379,7 @@ Global root bindings:
   (goto-char (point-max))
 
   ;; Delim between ewocs
-  ;; (insert "\n")
+  (insert "\n")
 
   ;; Custom filters
   (telega-filters--reset telega-filter-default)

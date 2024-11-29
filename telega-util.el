@@ -713,37 +713,6 @@ EMOJI-SYMBOL is the emoji symbol to be used. (Default is `telega-symbol-flames')
   "Function to create svg image for video preview."
   (telega-photo-preview--create-svg-one-line filename data-p width height t))
 
-(defun telega-video--create-svg (filename width height &optional data-p img-type)
-  "Create image for the VIDEO.
-With circle and triangle in the center."
-  (let* ((img-type (or img-type (telega-image-supported-file-p filename)))
-         (svg (telega-svg-create width height))
-         (play-size (/ height 8.0))
-         (xoff (/ play-size 8.0)))
-    (telega-svg-embed svg (if data-p
-                              filename
-                            (list (file-name-nondirectory filename)
-                                  (file-name-directory filename)))
-                      (format "image/%S" img-type) data-p
-                      :x 0 :y 0
-                      :width width :height height)
-    (svg-circle svg (/ width 2) (/ height 2) play-size
-                :fill "black"
-                :opacity "0.85")
-    (svg-polygon svg (list (cons (+ xoff (/ (- width play-size) 2))
-                                 (/ (- height play-size) 2))
-                           (cons (+ xoff (/ (- width play-size) 2))
-                                 (/ (+ height play-size) 2))
-                           (cons (+ xoff (/ (+ width play-size) 2))
-                                 (/ height 2)))
-                 :fill "white"
-                 :opacity "0.85")
-    (telega-svg-image svg :scale 1.0
-                      :base-uri (if data-p "" filename)
-                      :width width :height height
-                      :ascent 'center)
-    ))
-
 (defun telega-time-seconds (&optional as-is)
   "Return current time as unix timestamp.
 If AS-IS is non-nil, then do not apply time adjustment using
@@ -896,12 +865,6 @@ See `puny-decode-domain' for details."
        (puny-decode-domain (match-string 1 url))))
    url nil 'literal 1))
 
-(defun get-language-icon (language)
-  "Return icon for LANGUAGE from `language-icon-alist', or LANGUAGE itself if not found."
-  (let ((icon-data (assoc language language-icon-alist)))
-    (if icon-data
-        (apply (car (cdr icon-data)) (cdr (cdr icon-data)))
-      (telega-symbol 'codeblock))))  ;; 默认情况下，如果没有找到图标，使用 language 的值
 (defun telega--change-text-property (start end prop value how &optional object)
   "Change a property of the text from START to END.
 Arguments PROP and VALUE specify the property and value to add/remove
@@ -953,7 +916,7 @@ buffer) or a string."
                          (concat "^" (substring ent-text 1) "$"))))
             '(telega-entity-type-mention bold)
           'telega-entity-type-mention)
-        nil object))
+       nil object))
       (textEntityTypeMentionName
        (add-text-properties
         beg end (telega-link-props 'user (plist-get ent-type :user_id)) object)
@@ -1009,9 +972,9 @@ buffer) or a string."
        (add-text-properties
         beg end
         (list 'action (lambda (button)
-                        (telega-msg-open-media-timestamp
-                         (telega-msg-at button)
-                         (plist-get ent-type :media_timestamp))))
+                       (telega-msg-open-media-timestamp
+                        (telega-msg-at button)
+                        (plist-get ent-type :media_timestamp))))
         object)
        (add-face-text-property beg end 'telega-link nil object))
       (textEntityTypeCustomEmoji
@@ -1044,17 +1007,14 @@ buffer) or a string."
                    (unless (telega--text-entity-at-newline-p ent object)
                      (telega-ins "\n"))
                    (telega-ins--with-outline-palette palette
-                                                     (telega-ins--with-face (list 'bold 'underline
-                                                                                  (assq :foreground palette))
-                                                       (telega-ins (get-language-icon (telega-tl-str ent-type :language)))
-                                                       (telega-ins-prefix " "
-                                                         (telega-ins
-                                                          (capitalize (telega-tl-str ent-type :language)))))
-                                                     (telega-ins "\n")
-                                                     (telega-ins--with-face 'telega-entity-type-code
-                                                       (telega-ins (telega-strip-newlines
-                                                                    (telega--desurrogate-apply ent-text))))
-                                                     (telega-ins "\n"))))
+                     (telega-ins--with-face (list 'bold
+                                                  (assq :foreground palette))
+                       (telega-ins (concat (upcase (telega-tl-str ent-type :language)) " >")))
+                     (telega-ins "\n")
+                     (telega-ins--with-face 'telega-entity-type-code
+                       (telega-ins (telega-strip-newlines
+                                    (telega--desurrogate-apply ent-text))))
+                     (telega-ins "\n"))))
                 'telega-display-by 'telega-core)
           object)))
       (textEntityTypeSpoiler
@@ -1093,7 +1053,7 @@ buffer) or a string."
            (add-face-text-property
             beg end
             (telega-face-with-palette 'telega-entity-type-blockquote
-                                      palette :background)
+                palette :background)
             'append object)
            (let ((lw-prefix (propertize 
                              (telega-symbol 'vbar-left)
@@ -1119,7 +1079,7 @@ buffer) or a string."
            (add-face-text-property
             beg end
             (telega-face-with-palette 'telega-entity-type-blockquote
-                                      palette :background)
+                palette :background)
             'append object)
            (let ((lw-prefix (propertize 
                              (telega-symbol 'vbar-left)
@@ -1661,18 +1621,6 @@ ENTITY-TO-MARKUP-FUN is function to convert TDLib entities to string."
   "Return formatted text FMT-TEXT as string with org mode syntax."
   (telega--fmt-text-markup fmt-text #'telega--entity-to-org))
 
-(defun telega--fmt-text-entities-compare (entity1 entity2)
-  "Compare format text entities to sort them."
-  (let ((ent-type1 (telega--tl-type (plist-get entity1 :type)))
-        (ent-type2 (telega--tl-type (plist-get entity2 :type))))
-    (cond ((memq ent-type2 '(textEntityTypeBlockQuote
-                             textEntityTypeExpandableBlockQuote))
-           (not (memq ent-type1 '(textEntityTypeBlockQuote
-                                  textEntityTypeExpandableBlockQuote))))
-          ((eq ent-type2 'textEntityTypeSpoiler)
-           (not (eq ent-type1 'textEntityTypeSpoiler)))
-          )))
-
 ;; NOTE: FOR-MSG might be used by advices, see contrib/telega-mnz.el
 (defun telega--fmt-text-faces (fmt-text &optional _for-msg)
   "Apply faces to formatted text FMT-TEXT.
@@ -1732,7 +1680,7 @@ SORT-CRITERIA is a chat sort criteria to apply. (NOT YET)"
    (telega-sort-chats
     (or sort-criteria telega-chat-completing-sort-criteria)
     (telega-filter-chats (or chats telega--ordered-chats)
-      '(or is-known has-chatbuf)))))
+                         '(or is-known has-chatbuf)))))
 
 (defmacro telega-gen-completing-read-list (prompt items-list item-fmt-fun
                                                   item-read-fun &rest args)
@@ -1769,7 +1717,7 @@ SORT-CRITERIA is a chat sort criteria to apply. (NOT YET)"
   "Read multiple chats from CHATS-LIST."
   (setq chats-list
         (telega-filter-chats (or chats-list telega--ordered-chats)
-          '(or is-known has-chatbuf)))
+                             '(or is-known has-chatbuf)))
   (telega-gen-completing-read-list prompt chats-list #'telega-chatbuf--name
                                    #'telega-completing-read-chat sort-criteria))
 
@@ -1796,18 +1744,21 @@ SORT-CRITERIA is a chat sort criteria to apply. (NOT YET)"
   "Results from last `telega--searchChatMembers'.
 To be used `telega-completing-read-chat-member' to get user.")
 
-(defun telega-completing--chat-members-collection (chat prefix &rest _ignored)
-  "Function used for programmed completing CHAT members.
-Works only with `fido-mode' completion."
-  (when prefix
-    (setq telega-completing--chat-member-alist
-          (mapcar (lambda (user)
-                    (cons (propertize
-                           (telega-msg-sender-title-for-completion user)
-                           :user user)
-                          user))
-                  (telega--searchChatMembers chat prefix)))
-    (mapcar #'car telega-completing--chat-member-alist)))
+(cl-defun telega-completing--chat-member-choices (chat &key (prefix "")
+                                                       default-member)
+  "Return completions list of CHAT members."
+  (declare (indent 1))
+  (setq telega-completing--chat-member-alist
+        (mapcar (lambda (sender)
+                  (cons (propertize
+                         (telega-msg-sender-title-for-completion sender)
+                         :sender sender)
+                        sender))
+                (let ((members (telega--searchChatMembers chat prefix)))
+                  (if default-member
+                      (cons default-member (delq default-member members))
+                    members))))
+  (mapcar #'car telega-completing--chat-member-alist))
 
 (defun telega-completing-read (prompt collection &optional predicate
                                       require-match initial-input hist def
@@ -1841,8 +1792,9 @@ Works only with `fido-mode' completion."
           (local-set-key (kbd "C-c C-e") #'telega-custom-emoji-choose))
       (apply #'read-string prompt args))))
 
-(defun telega-completing-read-chat-member (prompt chat)
+(defun telega-completing-read-chat-member (prompt chat &optional default-member)
   "Interactively read member of CHAT.
+DEFAULT-MEMBER specifies default member to complete.
 Return a user."
   (let* ((telega-completing--chat-member-alist nil)
          (name
@@ -1851,13 +1803,19 @@ Return a user."
               ;; Works ok only in `fido-mode'
               (completing-read
                prompt
-               (apply-partially
-                #'telega-completing--chat-members-collection chat))
+               (lambda (prefix &rest _ignored)
+                 (telega-completing--chat-member-choices chat
+                   :prefix prefix
+                   :default-member (when (or (not prefix)
+                                             (string-empty-p prefix))
+                                     default-member)))
+               nil 'require-match)
 
             ;; Static completion, can complete only 50 chat members
             (telega-completing-read
              prompt
-             (telega-completing--chat-members-collection chat "")
+             (telega-completing--chat-member-choices chat
+               :default-member default-member)
              nil t))))
     (cdr (assoc name telega-completing--chat-member-alist))))
 
@@ -2138,7 +2096,7 @@ Do not trap errors if `debug-on-error' is enabled."
          (telega-debug "--------\n")
 
          (telega-ins "---[telega bug]\n")
-         (telega-ins-fmt "PP-ERROR: (%S %S) ==>\n" pp-fun arg)
+         (telega-ins-fmt "PP-ERROR: %S ==>\n" pp-fun)
          (telega-ins-fmt "  %S\n" pp-err)
          (telega-ins "------\n"))))))
 
@@ -2161,38 +2119,38 @@ Return EWOC node, nil if not found."
   (cl-assert (memq iter-func '(ewoc--node-next ewoc--node-prev)))
 
   (ewoc--set-buffer-bind-dll-let* ewoc
-                                  ((stop (if (eq iter-func #'ewoc--node-next)
-                                             (ewoc--footer ewoc)
-                                           (cl-assert (eq iter-func #'ewoc--node-prev))
-                                           (ewoc--header ewoc)))
-                                   (node (or start-node
-                                             (if (eq iter-func #'ewoc--node-next)
-                                                 (ewoc--node-next dll (ewoc--header ewoc))
-                                               (ewoc--node-prev dll (ewoc--footer ewoc)))))
-                                   (inhibit-read-only t))
-                                  (cl-block 'ewoc-node-found
-                                    (while (not (eq node stop))
-                                      (when (funcall test item (if key
-                                                                   (funcall key (ewoc--node-data node))
-                                                                 (ewoc--node-data node)))
-                                        (cl-return-from 'ewoc-node-found node))
-                                      (setq node (funcall iter-func dll node))))))
+      ((stop (if (eq iter-func #'ewoc--node-next)
+                 (ewoc--footer ewoc)
+               (cl-assert (eq iter-func #'ewoc--node-prev))
+               (ewoc--header ewoc)))
+       (node (or start-node
+                 (if (eq iter-func #'ewoc--node-next)
+                     (ewoc--node-next dll (ewoc--header ewoc))
+                   (ewoc--node-prev dll (ewoc--footer ewoc)))))
+       (inhibit-read-only t))
+    (cl-block 'ewoc-node-found
+      (while (not (eq node stop))
+        (when (funcall test item (if key
+                                     (funcall key (ewoc--node-data node))
+                                   (ewoc--node-data node)))
+          (cl-return-from 'ewoc-node-found node))
+        (setq node (funcall iter-func dll node))))))
 
 (defun telega-ewoc-map-refresh (ewoc map-function &rest args)
   "Refresh nodes if MAP-FUNCTION return non-nil.
 If MAP-FUNCTION returns `stop' then stop refreshing."
   (declare (indent 1))
   (ewoc--set-buffer-bind-dll-let* ewoc
-                                  ((footer (ewoc--footer ewoc))
-                                   (pp (ewoc--pretty-printer ewoc))
-                                   (node (ewoc--node-nth dll 1)))
-                                  (save-excursion
-                                    (while (not (eq node footer))
-                                      (when-let ((refresh-p (apply map-function (ewoc--node-data node) args)))
-                                        (ewoc--refresh-node pp node dll)
-                                        (when (eq refresh-p 'stop)
-                                          (setq node (ewoc--node-prev dll footer))))
-                                      (setq node (ewoc--node-next dll node))))))
+      ((footer (ewoc--footer ewoc))
+       (pp (ewoc--pretty-printer ewoc))
+       (node (ewoc--node-nth dll 1)))
+    (save-excursion
+      (while (not (eq node footer))
+        (when-let ((refresh-p (apply map-function (ewoc--node-data node) args)))
+          (ewoc--refresh-node pp node dll)
+          (when (eq refresh-p 'stop)
+            (setq node (ewoc--node-prev dll footer))))
+        (setq node (ewoc--node-next dll node))))))
 
 (defun telega-ewoc--find-if (ewoc predicate &optional key start-node iter-func)
   "Find EWOC's node by PREDICATE run on node's data.
@@ -2211,10 +2169,10 @@ KEY, START-NODE and ITER-FUNC are passed directly to `telega-ewoc--find'."
   ;; NOTE: No ewoc API to change just header :(
   ;; only `ewoc-set-hf'
   (ewoc--set-buffer-bind-dll-let* ewoc
-                                  ((head (ewoc--header ewoc))
-                                   (hf-pp (ewoc--hf-pp ewoc)))
-                                  (setf (ewoc--node-data head) header)
-                                  (ewoc--refresh-node hf-pp head dll)))
+      ((head (ewoc--header ewoc))
+       (hf-pp (ewoc--hf-pp ewoc)))
+    (setf (ewoc--node-data head) header)
+    (ewoc--refresh-node hf-pp head dll)))
 
 (defun telega-ewoc--set-footer (ewoc footer)
   "Set EWOC's new FOOTER."
@@ -2222,10 +2180,10 @@ KEY, START-NODE and ITER-FUNC are passed directly to `telega-ewoc--find'."
   ;; only `ewoc-set-hf'
   (declare (indent 1))
   (ewoc--set-buffer-bind-dll-let* ewoc
-                                  ((foot (ewoc--footer ewoc))
-                                   (hf-pp (ewoc--hf-pp ewoc)))
-                                  (setf (ewoc--node-data foot) footer)
-                                  (ewoc--refresh-node hf-pp foot dll)))
+      ((foot (ewoc--footer ewoc))
+       (hf-pp (ewoc--hf-pp ewoc)))
+    (setf (ewoc--node-data foot) footer)
+    (ewoc--refresh-node hf-pp foot dll)))
 
 (defun telega-ewoc--set-pp (ewoc pretty-printer)
   "Set EWOC's pretty printer to PRETTY-PRINTER.
@@ -2295,30 +2253,30 @@ integer values, then pixels used."
   (unless bar-str
     (setq bar-str telega-symbol-vertical-bar))
   (or ;(telega-emoji--image-cache-get bar-str 1)
-   (let* ((xh (telega-chars-xheight 1))
-          (aw-chars (string-width bar-str))
-          (xw (telega-chars-xwidth aw-chars))
-          (svg (telega-svg-create xw xh))
-          (bar-xpos (if (integerp bar-position)
-                        bar-position
-                      (round (* xw (or bar-position 0.3)))))
-          (bar-xw (if (integerp bar-width)
-                      bar-width
-                    (round (* xw (or bar-width 0.07)))))
-          image)
-     (when (< bar-xw 1)
-       (setq bar-xw 1))
-     (svg-rectangle svg bar-xpos 0 bar-xw xh
-                    :fill-opacity 1
-                    :fill "currentColor")
-     (setq image (telega-svg-image svg
-                   :scale 1.0
-                   :height (telega-ch-height 1)
-                   :ascent 'center
-                   :mask (or mask 'heuristic)
-                   :telega-text bar-str))
-                                        ;        (telega-emoji--image-cache-put bar-str 1 image)
-     image)))
+      (let* ((xh (telega-chars-xheight 1))
+             (aw-chars (string-width bar-str))
+             (xw (telega-chars-xwidth aw-chars))
+             (svg (telega-svg-create xw xh))
+             (bar-xpos (if (integerp bar-position)
+                           bar-position
+                         (round (* xw (or bar-position 0.3)))))
+             (bar-xw (if (integerp bar-width)
+                         bar-width
+                       (round (* xw (or bar-width 0.07)))))
+             image)
+        (when (< bar-xw 1)
+          (setq bar-xw 1))
+        (svg-rectangle svg bar-xpos 0 bar-xw xh
+                       :fill-opacity 1
+                       :fill "currentColor")
+        (setq image (telega-svg-image svg
+                      :scale 1.0
+                      :height (telega-ch-height 1)
+                      :ascent 'center
+                      :mask (or mask 'heuristic)
+                      :telega-text bar-str))
+;        (telega-emoji--image-cache-put bar-str 1 image)
+        image)))
 
 (defun telega-svg-create-horizontal-bar (&optional bar-width bar-position bar-str)
   "Create svg image for a horizontal bar.
@@ -2367,30 +2325,30 @@ integer values, then absolute value in pixels is used."
   "Create a checkmark."
   (declare (indent 1))
   (or (telega-emoji--image-cache-get checkmark-sym 1)
-      (let* ((aw-chars (string-width checkmark-sym))
-             (xw (min (telega-chars-xwidth aw-chars)
-                      (telega-chars-xheight 1)))
-             (svg (telega-svg-create xw xw))
-             (check-outline (concat "M1,8 5,14 12,4"
-                                    (when double-p
-                                      "M8,14 15,4")))
-             image)
-        (telega-svg-apply-outline
-         svg check-outline (/ xw 16.0)
-         (nconc (list :fill "none" :stroke "currentColor"
-                      :stroke-linecap "round"
-                      :stroke-linejoin "round"
-                      :stroke-miterlimit (* stroke-width 3)
-                      :stroke-width stroke-width)))
-        (setq image (telega-svg-image svg
-                      :scale 1.0
-                      :max-height (telega-ch-height 1)
-                      :width (telega-cw-width aw-chars)
-                      :ascent 'center
-                      :mask 'heuristic
-                      :telega-text checkmark-sym))
-        (telega-emoji--image-cache-put checkmark-sym 1 image)
-        image)))
+       (let* ((aw-chars (string-width checkmark-sym))
+              (xw (min (telega-chars-xwidth aw-chars)
+                       (telega-chars-xheight 1)))
+              (svg (telega-svg-create xw xw))
+              (check-outline (concat "M1,8 5,14 12,4"
+                                     (when double-p
+                                       "M8,14 15,4")))
+              image)
+         (telega-svg-apply-outline
+          svg check-outline (/ xw 16.0)
+          (nconc (list :fill "none" :stroke "currentColor"
+                       :stroke-linecap "round"
+                       :stroke-linejoin "round"
+                       :stroke-miterlimit (* stroke-width 3)
+                       :stroke-width stroke-width)))
+         (setq image (telega-svg-image svg
+                       :scale 1.0
+                       :max-height (telega-ch-height 1)
+                       :width (telega-cw-width aw-chars)
+                       :ascent 'center
+                       :mask 'heuristic
+                       :telega-text checkmark-sym))
+         (telega-emoji--image-cache-put checkmark-sym 1 image)
+         image)))
 
 (defun telega-symbol-emojify (emoji &optional image-spec)
   "Return a copy of EMOJI with  `display' property of EMOJI svg image.
@@ -2518,7 +2476,7 @@ For box buttons use `telega-box-button-active' face, otherwise use
 
       ;; NOTE: removing face from face list not always makes button to
       ;; redisplay, so force redisplay
-                                        ;      (redraw-frame (window-frame win))
+;      (redraw-frame (window-frame win))
       )))
 
 (defun telega-screenshot-with-import (tofile &optional region-p)
@@ -2716,7 +2674,7 @@ Emacs does not respect buffer local nil value for
 in `(window-prev-buffers)' to achive behaviour for nil-valued
 `switch-to-buffer-preserve-window-point'."
   (unless switch-to-buffer-preserve-window-point
-                                        ;(when (version< emacs-version "28.1.0")
+  ;(when (version< emacs-version "28.1.0")
     (cl-assert (not (get-buffer-window)))
     (when-let ((entry (assq (current-buffer) (window-prev-buffers))))
       (setf (nth 2 entry)
@@ -3158,13 +3116,17 @@ COLUMN is the column to aligned to."
                  (propertize emoji-name
                              'display (get-text-property 0 'display emoji))))))
     (reactionTypeCustomEmoji
-     (let* ((custom-emoji (telega-custom-emoji-get
-                           (plist-get reaction-type :custom_emoji_id)))
+     (let* ((custom-emoji-id (plist-get reaction-type :custom_emoji_id))
+            (custom-emoji (or (telega-custom-emoji-get custom-emoji-id)
+                              (seq-first (telega--getCustomEmojiStickers
+                                             (list custom-emoji-id)))))
             (emoji (telega-tl-str custom-emoji :emoji)))
        (telega-ins--as-string
         (telega-ins--image
          (telega-sticker--image custom-emoji) nil
-         :telega-text (concat emoji (telega-emoji-name emoji))))))))
+         :telega-text (concat emoji (telega-emoji-name emoji))))))
+    (reactionTypePaid
+     (telega-symbol 'telegram-star))))
 
 (defun telega-completing-read-msg-reaction (msg prompt &optional
                                                 msg-available-reactions
@@ -3336,6 +3298,17 @@ Return nil if there is no tags for the SM-TOPIC-ID or new tag is choosen."
         (line-pixel-height))
     (line-pixel-height)))
 
+(defun telega-dockrefile-tdlib-version (&optional dockerfile)
+  "Extract TDLib version from DOCKERFILE."
+  (with-temp-buffer
+    (insert-file-contents (or dockerfile (telega-etc-file "Dockerfile")))
+    (goto-char (point-min))
+    (let ((version (when (re-search-forward "^ARG tdlib_version=\\(.*\\)$")
+                     (match-string 1)))
+          (branch (when (re-search-forward "^ARG tdlib_branch=\\(.*\\)$")
+                    (match-string 1))))
+      (concat version "-" branch))))
+
 
 ;;; Transients
 (transient-define-suffix telega-saved-messages-tag-filter ()
@@ -3450,8 +3423,8 @@ Return nil if there is no tags for the SM-TOPIC-ID or new tag is choosen."
          (bit-off (% (if (> row-bits 8) row-bit-idx x) 8))
          (byte-mask (ash 1 bit-off))
          (byte-idx (progn
-                     (cl-assert (and (< x w) (< y h)))
-                     (/ (+ row-bit-idx (* y row-bits)) 8)))
+                    (cl-assert (and (< x w) (< y h)))
+                    (/ (+ row-bit-idx (* y row-bits)) 8)))
          (byte-val (aref data byte-idx)))
     (aset data byte-idx (if val
                             (logior byte-val byte-mask)
