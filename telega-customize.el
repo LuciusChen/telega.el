@@ -304,7 +304,7 @@ cell of endings for the button with LABEL."
 
 (defcustom telega-palette-context-ignore-list '(msg-header)
   "List of `telega-palette-context' values to ignore."
-  :type '(list symbol)
+  :type '(repeat symbol)
   :package-version '(telega . "0.8.292")
   :group 'telega)
 
@@ -1899,8 +1899,7 @@ So different messages could have different aux heading formatting."
   :group 'telega-msg)
 
 (defcustom telega-msg-save-dir nil
-  "*Directory for `telega-msg-save' without asking.
-If nil, the saved path is always asked."
+  "*Directory to save files with `telega-msg-save' to."
   :type '(choice (const :tag "Always ask for a directory to save to" nil)
                  string)
   :group 'telega-msg)
