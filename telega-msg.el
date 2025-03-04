@@ -434,8 +434,15 @@ Return nil for deleted messages."
         (cl-assert (telega-file--downloaded-p file))
         (telega-open-file (telega--tl-get file :local :path) msg))
 
-    (telega-video-player-run
-     (telega--tl-get file :local :path) msg done-callback)))
+    (let* ((start-timestamp
+            (or (telega--tl-get msg :content :start_timestamp)
+                (telega--tl-get msg :content :link_preview
+                                :type :start_timestamp)))
+           (telega-ffplay-media-timestamp
+            (unless (telega-zerop start-timestamp)
+              start-timestamp)))
+      (telega-video-player-run
+          (telega--tl-get file :local :path) msg done-callback))))
 
 (defun telega-msg--play-video-incrementally (msg video _file)
   "For massage MSG start playing VIDEO file, while still downloading it."
@@ -2182,22 +2189,28 @@ be added."
                                            'update-recent-reactions))))
         (with-telega-help-win "*Telegram Custom Reaction*"
           (unless (seq-empty-p top-av-reactions)
-            (telega-ins "TOP:\n")
-            (telega-ins--available-reaction-list
-             top-av-reactions reaction-type-action)
-            (telega-ins "\n\n"))
+            (telega-ins--with-face 'telega-describe-item-title
+              (telega-ins "TOP:\n"))
+            (telega-ins--line-wrap-prefix "  "
+              (telega-ins--available-reaction-list
+               top-av-reactions reaction-type-action)
+              (telega-ins "\n\n")))
 
           (unless (seq-empty-p recent-av-reactions)
-            (telega-ins "RECENT:\n")
-            (telega-ins--available-reaction-list
-             recent-av-reactions reaction-type-action)
-            (telega-ins "\n\n"))
+            (telega-ins--with-face 'telega-describe-item-title
+              (telega-ins "RECENT:\n"))
+            (telega-ins--line-wrap-prefix "  "
+              (telega-ins--available-reaction-list
+               recent-av-reactions reaction-type-action)
+              (telega-ins "\n\n")))
 
           (unless (seq-empty-p popular-av-reactions)
-            (telega-ins "POPULAR:\n")
-            (telega-ins--available-reaction-list
-             popular-av-reactions reaction-type-action)
-            (telega-ins "\n\n"))
+            (telega-ins--with-face 'telega-describe-item-title
+              (telega-ins "POPULAR:\n"))
+            (telega-ins--line-wrap-prefix "  "
+              (telega-ins--available-reaction-list
+               popular-av-reactions reaction-type-action)
+              (telega-ins "\n\n")))
 
           (telega-ins--custom-emoji-stickersets
            (lambda (sticker)
