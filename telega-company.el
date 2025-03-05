@@ -378,8 +378,7 @@ Matches only if CHAR does not apper in the middle of the word."
     (sorted t)
     ;; Complete only if chatbuf has corresponding bot
     (prefix
-     (when (telega-chatbuf-match-p '(type bot))
-       (telega-company-grab-botcmd)))
+     (telega-company-grab-botcmd))
     (candidates
      (all-completions arg (telega-company--bot-commands)))
     (annotation
