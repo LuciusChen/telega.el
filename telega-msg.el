@@ -162,9 +162,9 @@
     ;; Marking, `telega-msg-forward' and `telega-msg-delete' can work
     ;; on list of marked messages
     (define-key map (kbd "m") 'telega-msg-mark-toggle)
-    (define-key map (kbd "n") 'telega-button-forward)
+    (define-key map (kbd "n") 'telega-msg-next)
     (define-key map (kbd "<tab>") 'telega-chatbuf-next-link)
-    (define-key map (kbd "p") 'telega-button-backward)
+    (define-key map (kbd "p") 'telega-msg-previous)
     (define-key map (kbd "<backtab>") 'telega-chatbuf-prev-link)
     (define-key map (kbd "r") 'telega-msg-reply)
     (define-key map (kbd "t") 'telega-msg-translate)
@@ -365,7 +365,12 @@ Return nil for deleted messages."
          (chat-id (plist-get reply-to :chat_id))
          (msg-id (plist-get reply-to :message_id)))
     (unless (or (telega-zerop chat-id) (telega-zerop msg-id))
-      (telega-chat--goto-msg (telega-chat-get chat-id) msg-id 'highlight))))
+      (telega-chat--goto-msg (telega-chat-get chat-id) msg-id 'highlight
+        ;; Possibly jump to the beginning of the reply quote
+        (when-let ((reply-quote (plist-get reply-to :quote)))
+           (lambda ()
+             (telega-chatbuf--goto-msg-content
+              (plist-get reply-quote :position))))))))
 
 (defun telega-msg-open-sticker (msg &optional sticker)
   "Open content for sticker message MSG."
@@ -1284,7 +1289,7 @@ If WITH-PREFIX-P is non-nil, then prefix username with \"@\" char."
 (defun telega-msg-sender--verification-badges (v-status)
   "Return verification status bages string."
   (when v-status
-    (concat 
+    (concat
      (when (plist-get v-status :is_scam)
        (propertize (telega-i18n "lng_scam_badge") 'face 'error))
      (when (plist-get v-status :is_fake)
@@ -1429,6 +1434,20 @@ Return function by which MSG has been ignored."
     ignored-p))
 
 
+(defun telega-msg-next (n)
+  "Goto next N messages."
+  (interactive "p")
+  (let ((button (telega-button-forward n
+                  (button-type-get 'telega-msg :predicate))))
+    (when (and button telega-msg-goto-content)
+      (telega-chatbuf--goto-msg-content))
+    button))
+
+(defun telega-msg-previous (n)
+  "Goto N previous messages."
+  (interactive "p")
+  (telega-msg-next (- n)))
+
 (defun telega-msg-unmark (msg)
   "Unmark message MSG."
   (with-telega-chatbuf (telega-msg-chat msg)
@@ -1452,7 +1471,7 @@ Return function by which MSG has been ignored."
     ;; after marking messages some message command is expected (for
     ;; example forwarwarding)
     (unless (eq msg (telega-chatbuf--last-msg))
-      (telega-button-forward 1 (button-type-get 'telega-msg :predicate)))
+      (telega-msg-next 1))
 
     (telega-chatbuf--chat-update "marked-messages")))
 
