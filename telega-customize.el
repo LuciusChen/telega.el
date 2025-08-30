@@ -543,7 +543,7 @@ See `telega-avatar--create-image' for more info."
 (defcustom telega-avatar-workaround-gaps-for nil
   "Chat temex for chats to enable workaround for gaps in the avatars."
   :package-version '(telega . "0.8.215")
-  :type 'chat-temex
+  :type 'telega-chat-temex
   :options '((return t))
   :group 'telega)
 
