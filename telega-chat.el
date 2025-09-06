@@ -3010,6 +3010,11 @@ Global chat bindings:
   (when (and (not (plist-get telega-chatbuf--chat :telega_topics_count))
              (telega-chatbuf-match-p 'is-forum))
     (telega-chat--forum-topics-fetch telega-chatbuf--chat))
+
+  ;; Yank clipboard with `M-x yank-media RET'
+  (when (fboundp 'yank-media-handler)
+    (funcall #'yank-media-handler '(image/png image/jpeg)
+             #'telega-chatbuf--yank-media))
   )
 
 (defun telega-chatbuf--set-action (action)
@@ -4555,18 +4560,20 @@ MARKUP-NAME names a markup function from
                                     inputMessagePhoto
                                     inputMessageVideo))
                             ;; New caption for the forwarded message?
-                            (and (eq (telega--tl-type attach)
+                            (and (eq (telega--tl-type next-attach)
                                      'telegaForwardMessage)
-                                 (plist-get attach :send_copy)
-                                 (plist-get attach :remove_caption)
+                                 (plist-get next-attach :send_copy)
+                                 (plist-get next-attach :remove_caption)
                                  (memq (telega--tl-type
-                                        (telega--tl-get attach :message :content))
+                                        (telega--tl-get next-attach
+                                                        :message :content))
                                        '(messageAnimation
                                          messagePaidMedia
                                          messagePhoto
                                          messageVideo)))))
                    (plist-put next-attach :caption
                               (telega-string-fmt-text text markup-function))
+                   (plist-put next-attach :show_caption_above_media t)
                    (setq attaches (cdr attaches))
                    (push next-attach result))
 
@@ -5582,25 +5589,36 @@ voice-note.  Otherwise record voice note inplace.
            :duration (round (telega-ffplay-get-duration i-filename))
            :voice_note ifile))))
 
+(defun telega-chatbuf--yank-media (mime-type data &optional doc-p)
+  "Handler for the `yank-media' command."
+  (let* ((temporary-file-directory telega-temp-dir)
+         (tmpfile (telega-temp-name "clipboard"
+                                    (cl-ecase mime-type
+                                      (image/png ".png")
+                                      (image/jpeg ".jpg"))))
+         (coding-system-for-write 'binary))
+    (write-region data nil tmpfile nil 'quiet)
+    (telega-chatbuf-attach-media tmpfile (when doc-p 'preview))))
+
 (defun telega-chatbuf-attach-clipboard (doc-p)
   "Attach clipboard image to the chatbuf as photo.
 If `\\[universal-argument]' is given, then attach clipboard as document."
   (interactive "P")
-  (let* ((selection-coding-system 'no-conversion) ;for rawdata
-         (temporary-file-directory telega-temp-dir)
-         (tmpfile (telega-temp-name "clipboard" ".png"))
-         (coding-system-for-write 'binary))
-    (if (eq system-type 'darwin)
-        (progn
-          ;; NOTE: On MacOS, try extracting clipboard using pngpaste
-          (unless (executable-find "pngpaste")
-            (error "Please install pngpaste to paste images"))
-          (unless (= 0 (telega-screenshot-with-pngpaste tmpfile))
-            (error "No image in CLIPBOARD")))
-      (write-region (or (gui-get-selection 'CLIPBOARD 'image/png)
-                        (error "No image in CLIPBOARD"))
-                    nil tmpfile nil 'quiet))
-    (telega-chatbuf-attach-media tmpfile (when doc-p 'preview))))
+  (if (eq system-type 'darwin)
+      (progn
+        ;; NOTE: On MacOS, try extracting clipboard using pngpaste
+        (unless (executable-find "pngpaste")
+          (error "Please install pngpaste to paste images"))
+        (unless (= 0 (telega-screenshot-with-pngpaste
+                      (telega-temp-name "clipboard" ".png")))
+          (error "No image in CLIPBOARD")))
+    (apply #'telega-chatbuf--yank-media
+           (or (catch 'found
+                 (dolist (mime-type '(image/png image/jpeg))
+                   (when-let* ((selection-coding-system 'no-conversion) ;raw data
+                               (data (gui-get-selection 'CLIPBOARD mime-type)))
+                     (throw 'found (list mime-type data (when doc-p 'preview))))))
+               (error "No image in CLIPBOARD")))))
 
 (defun telega-chatbuf-attach-screenshot (&optional n chat)
   "Attach screenshot to the chatbuf input.
