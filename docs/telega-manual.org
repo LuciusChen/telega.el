@@ -1,5 +1,5 @@
 #+options: timestamp:nil \n:t num:nil ellit-cid:t
-#+title: Telega Manual (v0.8.552)
+#+title: Telega Manual (v0.8.560)
 #+author: Zajcev Evgeny
 #+startup: showall
 
@@ -107,6 +107,7 @@ Do not edit manually.  Modify =telega-ellit.org= or comments in
     - [[#telega-contact-birthdays-mode][telega-contact-birthdays-mode]]
     - [[#telega-play-media-sequence-mode][telega-play-media-sequence-mode]]
     - [[#telega-network-stats-mode][telega-network-stats-mode]]
+    - [[#telega-ton-star-usd-rate-mode][telega-ton-star-usd-rate-mode]]
     - [[#telega-voip-sounds-mode][telega-voip-sounds-mode]]
   - [[#contributed-packages][Contributed packages]]
     - [[#ol-telegael--org-mode-links-to-telegram-chats-and-messages][/ol-telega.el/ -- Org mode links to telegram chats and messages]]
@@ -147,10 +148,10 @@ development]], also see benefits you get [[#telega-patrons-mode][being telega pa
 :CUSTOM_ID: installation
 :END:
 
-=telega= depends on the =visual-fill-column= and =rainbow-identifiers=
-packages.  This dependency automatically installs if you install
-=telega= from MELPA or GNU Guix.  Otherwise will you need to install
-these packages by hand.
+=telega= depends on the =visual-fill-column= and =transient= packages.
+This dependency automatically installs if you install =telega= from
+MELPA or GNU Guix.  Otherwise will you need to install these packages
+by hand.
 
 =telega= is built on top of the official library provided by Telegram
 [[https://core.telegram.org/tdlib][TDLib]].  Most distributions do not provide this package in their
@@ -236,7 +237,7 @@ Thanks to [[https://t.me/ritsch_master][=@ritsch_master=]]
 
 [[https://core.telegram.org/tdlib][TDLib]] is the library for building Telegram clients. It requires a
 large amount of memory to be built.  Make sure you are using TDLib
-version equal to v1.8.55-369ee922b.
+version equal to v1.8.56-dd1b761fd.
 
 On MacOS you can install a pre-built =TDLib= package using homebrew
 from [[https://brew.sh][brew.sh]].  Just run:
@@ -382,7 +383,7 @@ Or you could use git repository with this melpa-style recipe for [[https://githu
 :CUSTOM_ID: installing-telega-directly-from-github
 :END:
 
-Make sure dependencies are installed with @@html:<kbd>@@M-x package-install RET visual-fill-column RET@@html:</kbd>@@ and @@html:<kbd>@@M-x package-install RET rainbow-identifiers RET@@html:</kbd>@@.
+Make sure dependencies are installed with @@html:<kbd>@@M-x package-install RET visual-fill-column RET@@html:</kbd>@@ and @@html:<kbd>@@M-x package-install RET transient RET@@html:</kbd>@@.
 
 Get the source:
 #+begin_src shell
@@ -1208,6 +1209,9 @@ Use ~telega-chat-match-p~ to match a chat.
 - has-discussion-group :: 
      Matches if chat is a channel with a linked discussion group.
 
+- is-discussion-group :: 
+     Matches if chat is a discussion group for a channel.
+
 - has-direct-messages-group :: 
      Matches if chat is a channel having a direct messages group.
 
@@ -1284,7 +1288,7 @@ Use ~telega-chat-match-p~ to match a chat.
 - has-pinned-stories :: 
      Matches if channel chat has pinned stories.
 
-- can-send-stories :: 
+- can-post-stories :: 
      Matches if you can post a story into chat.
 
 - (my-boost [ ~N~ ]) :: 
@@ -1362,12 +1366,13 @@ Use ~telega-msg-match-p~ to match a message.
      Matches if message is a channel post that can be commented.
      Return messageReplyInfo.
 
-- is-topic :: 
-     Matches if message is a forum topic message.
+- is-forum-topic :: 
+     Matches if message belongs to or starts a forum topic.
      Return ~MessageTopic~ structure.
 
 - is-thread :: 
      Matches if message belongs to or starts a messages thread.
+     Return ~MessageTopic~ structure.
 
 - (link-preview ~LP-TYPES~ ]) :: 
      Matches messages with a webpage preview.
@@ -1483,6 +1488,9 @@ Use ~telega-user-match-p~ to match a user.
 - has-rating :: 
      Matches if user has rating.
      Return rating.
+
+- is-bot-with-topics :: 
+     Matches if user is a bot having topics.
 ** List of Message Sender Temexes
 :PROPERTIES:
 :CUSTOM_ID: list-of-message-sender-temexes
@@ -1551,6 +1559,11 @@ Use ~telega-topic-match-p~ to match a forum's topic.
 
 - is-current-in-chatbuf :: 
      Return non-nil if chatbuf is filtered by topic.
+
+- (type ~TOPIC-TYPE-LIST~) :: 
+     Return non-nil if topic has topic-type.
+     ~TOPIC~-TYPE is one of ~thread~, ~forum~, ~sm~ or ~dm~.
+     Return ~TOPIC~.
 ** List of Story Temexes
 :PROPERTIES:
 :CUSTOM_ID: list-of-story-temexes
@@ -1846,6 +1859,9 @@ For other sorting keybindings see below.
 
 - ~important~ :: 
      Makes chats matching ~telega-important-chat-temex~ on top.
+
+- ~unread-mention~ :: 
+     Makes chats having unread mentions on top.
 ** Customizable options making use of sorting criteria
 :PROPERTIES:
 :CUSTOM_ID: customizable-options-making-use-of-sorting-criteria
@@ -1860,7 +1876,7 @@ For other sorting keybindings see below.
 
   Criteria to sort open chats when switching with ~telega-switch-buffer~. 
 
-  Default value: ~chatbuf-recency~
+  Default value: ~(important chatbuf-recency)~
 * Chat buffer
 :PROPERTIES:
 :CUSTOM_ID: chat-buffer
@@ -2378,6 +2394,10 @@ Customizable options:
      starts chatbuf input.
 
 
+- telega-company-quick-reply :: Complete quick replies via
+     ~/<shortcut>~ syntax in private chats.
+
+
 - telega-company-markdown-precode :: Complete language name for
      code blocks via ~```~ syntax.
 
@@ -2393,7 +2413,7 @@ controlled by:
     (telega-company-emoji telega-company-telegram-emoji
                           telega-company-username telega-company-hashtag
                           telega-company-markdown-precode
-                          telega-company-botcmd)
+                          telega-company-botcmd telega-company-quick-reply)
   #+end_src
 
 
@@ -2495,7 +2515,7 @@ Chatbuf uses next bindings for message filtering:
 - @@html:<kbd>@@C-c C-c@@html:</kbd>@@ (~telega-chatbuf-filter-cancel~) :: 
      Cancel current messages filtering.
      If point is at some message, then keep point on this message after reseting.
-     If @@html:<kbd>@@C-u@@html:</kbd>@@ is given, then cancel thread filtering as well.
+     If @@html:<kbd>@@C-u@@html:</kbd>@@ is given, then cancel topic filtering as well.
 
 - @@html:<kbd>@@C-c C-r@@html:</kbd>@@ (~telega-chatbuf-inplace-search-query~) :: 
      Inplace search backward for the ~QUERY~.
@@ -3329,10 +3349,56 @@ Play media content in subsequent manner.
 :CUSTOM_ID: telega-network-stats-mode
 :END:
 
-Mode to display network stats of the current session in the root
-buffer's status section.
+Mode to get network stats of the current session and display it in
+the root buffer's status section or/and in the root buffer's
+modeline.
 
-~telega-network-stats-mode~ is enabled by default.
+Enable it with ~(telega-network-stats-mode 1)~ or at =telega= load time:
+#+begin_src emacs-lisp
+  (add-hook 'telega-load-hook 'telega-network-stats-mode)
+#+end_src
+
+Customizable options:
+- User Option: ~telega-network-stats-places~ 
+
+  Where to display network statistics. 
+
+  Default value: ~(mode-line)~
+- User Option: ~telega-network-stats-update-period~ 
+
+  Update period for network stats. 
+
+  Default value: ~10~
+- User Option: ~telega-network-stats-format~ 
+
+  Format for the stats string.
+  %d - for the download stats in a human readable form.
+  %u - for the upload stats in a human readable form. 
+
+  Default value: ~"Network: %d↓/ %u↑"~
+** telega-ton-star-usd-rate-mode
+:PROPERTIES:
+:CUSTOM_ID: telega-ton-star-usd-rate-mode
+:END:
+
+Toggle TON and Telegram Star rate to USD in the rootbuf's mode line.
+
+Enable it with ~(telega-ton-star-usd-rate-mode 1)~ or at =telega= load time:
+#+begin_src emacs-lisp
+  (add-hook 'telega-load-hook 'telega-ton-star-usd-rate-mode)
+#+end_src
+
+Customizable options:
+- User Option: ~telega-ton-star-usd-rate-format~ 
+
+  Format for TON and stars rate to USD.
+  %i - for the ~ton~ icon.
+  %t - USD price for the one TON.
+  %I - for the Telegram star icon.
+  %B - USD price for the 100 Telegram stars to buy.
+  %S - USD price for the 100 Telegram star to sell. 
+
+  Default value: ~"%i$%t, 100%I$%B/$%S"~
 ** telega-voip-sounds-mode
 :PROPERTIES:
 :CUSTOM_ID: telega-voip-sounds-mode
