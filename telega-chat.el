@@ -2275,9 +2275,9 @@ Use this to surrond header with some prefix and suffix."
   "Inserter for the pending join requests."
   (telega-chatbuf--dirtiness-init "updateChatPendingJoinRequests")
 
-  (when-let* ((pending-join-requests
+  (when-let* ((jr-info
                (plist-get telega-chatbuf--chat :pending_join_requests))
-              (nrequests (plist-get pending-join-requests :total_count)))
+              (nrequests (plist-get jr-info :total_count)))
     (unless (or (telega-zerop nrequests)
                 (eq nrequests (plist-get telega-chatbuf--hidden-headers
                                          :pending-join-requests)))
@@ -2288,7 +2288,7 @@ Use this to surrond header with some prefix and suffix."
                              :pending-join-requests nrequests)
                   (telega-chatbuf--chat-update "updateChatPendingJoinRequests")))
       (telega-ins " " (telega-i18n "lng_manage_peer_requests") ": ")
-      (telega-ins--pending-join-requests pending-join-requests)
+      (telega-ins--chat-pending-join-requests telega-chatbuf--chat jr-info)
       (telega-ins "\n"))))
 
 (defun telega-chatbuf-footer-ins-action-bar ()
@@ -7099,7 +7099,10 @@ ensuring point keep being inside the message."
   "List of message filters defined by TDLib.")
 
 (defconst telega-chat--message-filters
-  `(("scheduled"
+  `(("favorite"
+     has-favorite-messages
+     telega-chatbuf-filter-favorite)
+    ("scheduled"
      has-scheduled-messages telega-chatbuf-filter-scheduled)
     ("search"
      (return t) telega-chatbuf-filter-search)
@@ -7305,17 +7308,51 @@ sent by some chat member, member name is queried."
 
   (let ((scheduled-messages
          (telega--getChatScheduledMessages telega-chatbuf--chat)))
-    (telega-chatbuf--filter-reset 'no-update)
-    (telega-chatbuf--topic-reset 'no-update)
-    (telega-chatbuf--clean)
-    (setq telega-chatbuf--msg-filter
-          (list :title "scheduled"
-                :tdlib-msg-filter #'telega-chatbuf-filter-scheduled
-                :msg-temex '(prop :scheduling_state)
-                :total-count (length scheduled-messages)))
-    (telega-chatbuf--chat-update "topic" "msg-filter")
+    (save-window-excursion
+      (telega-chatbuf--filter-reset 'no-update)
+      (telega-chatbuf--topic-reset 'no-update)
+      (telega-chatbuf--clean)
+      (setq telega-chatbuf--msg-filter
+            (list :title "scheduled"
+                  :tdlib-msg-filter #'telega-chatbuf-filter-scheduled
+                  :msg-temex '(prop :scheduling_state)
+                  :total-count (length scheduled-messages)))
+      (telega-chatbuf--chat-update "topic" "msg-filter")
 
-    (telega-chatbuf--insert-messages (nreverse scheduled-messages) 'prepend)))
+      (telega-chatbuf--insert-messages
+       (nreverse scheduled-messages) 'prepend))))
+
+(defun telega-chatbuf-filter-favorite ()
+  "Show only favorite messages."
+  (interactive)
+  (let* ((fav-msg-ids (telega-chat-favorite-messages-ids telega-chatbuf--chat))
+         (favorite-messages
+          (when fav-msg-ids
+            (message "telega: %s" (telega-i18n "telega_loading"))
+            (prog1
+                (telega--getMessages (plist-get telega-chatbuf--chat :id)
+                    fav-msg-ids)
+              (message "")))))
+    (unless favorite-messages
+      (user-error "No favorite messages in the chat"))
+
+    (save-window-excursion
+      (telega-chatbuf--filter-reset 'no-update)
+      (telega-chatbuf--topic-reset 'no-update)
+      (telega-chatbuf--clean)
+      (setq telega-chatbuf--msg-filter
+            (list :title "favorite"
+                  :tdlib-msg-filter #'telega-chatbuf-filter-favorite
+                  :msg-temex '(call telega-msg-favorite-p)
+                  :total-count (length favorite-messages)))
+      (telega-chatbuf--chat-update "topic" "msg-filter")
+
+      (telega-chatbuf--insert-messages
+       (sort favorite-messages
+             (lambda (msg1 msg2)
+               (< (plist-get msg1 :id)
+                  (plist-get msg2 :id))))
+       'prepend))))
 
 (defun telega-chatbuf-filter-by-saved-messages-tag (tag &optional query)
   "Filter messages by Saved Messages TAG."
