@@ -46,16 +46,16 @@ RUN cd / && git clone https://github.com/Samsung/rlottie.git && \
     cd rlottie && \
     mkdir build && \
     cd build && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr .. && \
-    cmake --build . --target install
+    cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr .. && \
+    cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 --build . --target install
 
 RUN echo "tgs2png 0.3.0" > /tgs2png-version && \
     cd / && git clone https://github.com/zevlg/tgs2png && \
     cd tgs2png && \
     mkdir build && \
     cd build && \
-    cmake .. && \
-    cmake --build . && \
+    cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 .. && \
+    cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 --build . && \
     install tgs2png /usr/bin
 
 ADD server /telega-server
@@ -76,9 +76,9 @@ RUN cd /telega-server && \
 FROM alpine:latest
 
 # - psmisc (with killall tool) used to kill ffmpeg processes
-# - libqrencode (with qrencode tool) used for QR code auth method
+# - libqrencode-tools (with qrencode tool) used for QR code auth method
 RUN set +x && apk update && apk upgrade && \
-    apk add --update zlib-dev openssl ffmpeg libwebp-tools psmisc libqrencode bash
+    apk add --update zlib-dev openssl ffmpeg libwebp-tools psmisc libqrencode-tools bash
 
 # To make ALSA work
 COPY etc/asound.conf /etc/asound.conf
