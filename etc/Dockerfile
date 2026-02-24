@@ -16,8 +16,8 @@
 # This comment is to trigger ARM64 build
 
 FROM alpine:latest AS builder
-ARG tdlib_version=v1.8.57
-ARG tdlib_branch=f0d04d3
+ARG tdlib_version=v1.8.60
+ARG tdlib_branch=0da5c72f8
 ARG telega_branch=master
 
 RUN set +x && apk update && apk upgrade && \
@@ -47,7 +47,7 @@ RUN cd / && git clone https://github.com/Samsung/rlottie.git && \
     mkdir build && \
     cd build && \
     cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr .. && \
-    cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 --build . --target install
+    cmake --build . --target install
 
 RUN echo "tgs2png 0.3.0" > /tgs2png-version && \
     cd / && git clone https://github.com/zevlg/tgs2png && \
@@ -55,7 +55,7 @@ RUN echo "tgs2png 0.3.0" > /tgs2png-version && \
     mkdir build && \
     cd build && \
     cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 .. && \
-    cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 --build . && \
+    cmake --build . && \
     install tgs2png /usr/bin
 
 ADD server /telega-server
