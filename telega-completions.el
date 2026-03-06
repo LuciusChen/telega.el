@@ -155,14 +155,13 @@ Handles repeated leading CHARs (e.g. @@).  Returns nil if not applicable."
     (save-excursion
       (when (or (looking-at-p "\\>") (eobp))
         (skip-syntax-backward "w"))
-      (skip-chars-backward (char-to-string char))
-      (when (= (char-before) char)
-        (let ((start (1- (point))))
-          (save-excursion
-            (backward-char)
-            (skip-chars-backward (char-to-string char))
-            (setq start (point)))
-          (cons start end))))))
+      ;; At this point we are right after the trigger char(s).
+      ;; Check char-before FIRST (same logic as telega-company-grab-single-char),
+      ;; then skip backward over all repeated CHARs to find the true start.
+      (when (and (char-before) (= (char-before) char))
+        (skip-chars-backward (char-to-string char))
+        (unless (looking-at-p "\\w")
+          (cons (point) end))))))
 
 (defun telega-capf--botcmd-bounds ()
   "Return (START . END) if point is in a /command at start of chatbuf input."
