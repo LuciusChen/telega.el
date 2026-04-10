@@ -3,10 +3,10 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="telega" xml:lang="telega">
 <head>
-<!-- 2026-01-29 Чт 23:22 -->
+<!-- 2026-04-08 Ср 22:50 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Telega Manual (v0.8.600)</title>
+<title>Telega Manual (v0.8.630)</title>
 <meta name="author" content="Zajcev Evgeny" />
 <meta name="generator" content="Org Mode" />
 <link rel="stylesheet" type="text/css" href="https://zevlg.github.io/org-html-themes/src/readtheorg_theme/css/htmlize.css"/>
@@ -68,7 +68,7 @@
 <body>
 <div id="content" class="content">
 <div id="table-of-contents" role="doc-toc">
-<h2><img id="toc-logo" src="https://raw.githubusercontent.com/zevlg/telega.el/master/etc/telega-logo.svg"/>&nbsp;Telega Manual (v0.8.600)</h2>
+<h2><img id="toc-logo" src="https://raw.githubusercontent.com/zevlg/telega.el/master/etc/telega-logo.svg"/>&nbsp;Telega Manual (v0.8.630)</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
 <li><a href="#introduction">Introduction</a></li>
@@ -86,7 +86,11 @@
 <li><a href="#running-telega-server-in-docker">Running telega-server in docker</a></li>
 </ul>
 </li>
-<li><a href="#getting-started">Getting started</a></li>
+<li><a href="#getting-started">Getting started</a>
+<ul>
+<li><a href="#using-proxy-to-access-telegram">Using proxy to access Telegram</a></li>
+</ul>
+</li>
 <li><a href="#settings-for-emacs-as-daemon">Settings for Emacs As Daemon</a></li>
 <li><a href="#telega-glossary">Telega glossary</a></li>
 <li><a href="#telega-prefix-map">Telega prefix map</a></li>
@@ -176,6 +180,7 @@
 <li><a href="#telega-play-media-sequence-mode"><span class="todo TODO">TODO</span> telega-play-media-sequence-mode</a></li>
 <li><a href="#telega-network-stats-mode">telega-network-stats-mode</a></li>
 <li><a href="#telega-ton-star-usd-rate-mode">telega-ton-star-usd-rate-mode</a></li>
+<li><a href="#telega-proxy-status-mode">telega-proxy-status-mode</a></li>
 <li><a href="#telega-transient-keymaps-mode--use-transient-for-telega-keymaps">telega-transient-keymaps-mode &#x2013; Use transient for telega keymaps</a></li>
 <li><a href="#telega-voip-sounds-mode">telega-voip-sounds-mode</a></li>
 </ul>
@@ -366,7 +371,7 @@ Thanks to <a href="https://t.me/ritsch_master"><code>@ritsch_master</code></a>
 <p>
 <a href="https://core.telegram.org/tdlib">TDLib</a> is the library for building Telegram clients. It requires a
 large amount of memory to be built.  Make sure you are using TDLib
-version equal to v1.8.61-11e254af6.
+version equal to v1.8.63-1677a0c77.
 </p>
 
 <p>
@@ -649,8 +654,7 @@ notes, etc.
 <div class="outline-text-2" id="text-getting-started">
 <p>
 Start <code>telega</code> with <kbd>M-x telega RET</kbd>. The first time it will
-ask for the phone number you have associated with the Telegram
-network.
+ask you to authorize via QR-code using official Telegram application.
 </p>
 
 <p>
@@ -694,33 +698,6 @@ Default value:
 </div></li>
 
 <li><p>
-User Option: <code>telega-proxies</code> 
-</p>
-
-<p>
-List of proxies.
-Format is:
-  (:server "&lt;ADDRESS&gt;" :port &lt;PORT&gt; :enable &lt;BOOL&gt; :type &lt;PROXY-TYPE&gt;)
-</p>
-
-<p>
-where PROXY-TYPE is one of:
-</p>
-<ul class="org-ul">
-<li>(:@type "proxyTypeSocks5" :username &lt;USER&gt; :password &lt;PASSWORD&gt;)</li>
-<li>(:@type "proxyTypeHttp" :username &lt;USER&gt; :password &lt;PASSWORD&gt;
-:http<sub>only</sub> &lt;BOOL&gt;)</li>
-<li>(:@type "proxyTypeMtproto" :secret &lt;SECRET-STRING&gt;)</li>
-</ul>
-
-<p>
-&lt;BOOL&gt; is either t or <code>:false</code>, nil is not valid value. 
-</p>
-
-<p>
-Default value: <code>nil</code>
-</p></li>
-<li><p>
 User Option: <code>telega-my-location</code> 
 </p>
 
@@ -747,6 +724,51 @@ See also <a href="#telega-my-location-mode">telega-my-location-mode</a> to autom
 To list all available customizable user options use <code>M-x
 customize-group RET telega RET</code> command.
 </p>
+</div>
+<div id="outline-container-using-proxy-to-access-telegram" class="outline-3">
+<h3 id="using-proxy-to-access-telegram"><a class="self-link" href="#using-proxy-to-access-telegram"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>Using proxy to access Telegram</h3>
+<div class="outline-text-3" id="text-using-proxy-to-access-telegram">
+<p>
+<code>telega</code> supports Telegram proxies.  Use <kbd>M-x telega-describe-proxies RET</kbd> to list already added proxies.
+Added proxies and enabled proxy is retained across <code>telega</code>
+sessions.
+</p>
+
+<p>
+Use <a href="#telega-proxy-status-mode">telega-proxy-status-mode</a> to show
+proxy status in the rootbuf.
+</p>
+
+<p>
+Use <code>telega-before-auth-hook</code> to add (and probably enable) a proxy
+before authorizing in the Telegram.  This is helpful if you can't
+connect to the Telegram directly and you have no added proxies.
+</p>
+
+<p>
+For example:
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(add-hook 'telega-before-auth-hook
+          (<span style="font-weight: bold;">lambda</span> ()
+             (telega--addProxy &lt;PROXY&gt; 'enable)))
+</pre>
+</div>
+
+<p>
+Where <code>PROXY</code> has following format:
+<code>(:server "&lt;ADDRESS&gt;" :port &lt;PORT&gt; :type &lt;PROXY-TYPE&gt;)</code>
+</p>
+
+<p>
+Where <code>PROXY-TYPE</code> is one of:
+</p>
+<ul class="org-ul">
+<li><code>(:@type "proxyTypeSocks5" :username "&lt;USER&gt;" :password "&lt;PASSWORD&gt;")</code>, all fields except for <code>:@type</code> are optional.</li>
+<li><code>(:@type "proxyTypeHttp" :username "&lt;USER&gt;" :password "&lt;PASSWORD&gt;" :http_only t|:false)</code>, all fields except for <code>:@type</code> are optional.</li>
+<li><code>(:@type "proxyTypeMtproto" :secret "&lt;SECRET-STRING&gt;")</code></li>
+</ul>
+</div>
 </div>
 </div>
 <div id="outline-container-settings-for-emacs-as-daemon" class="outline-2">
@@ -851,7 +873,7 @@ corresponding chatbuf.
 <p>
 rootbuf lists the chat buttons, such as:
 </p>
-<pre class="example" id="org8b6728f">
+<pre class="example" id="org87f56a4">
 {🎗Saved Messages            }📌  📹 Video (10s)               Fri✓
 [Emacs | Emacs (english)     ]  @oldosfan: same                Fri
 ...
@@ -869,7 +891,7 @@ Named temex to filter chats in the rootbuf.
 Custom chat filters are displayed as buttons above the chat list in
 the rootbuf, such as:
 </p>
-<pre class="example" id="org7eeae00">
+<pre class="example" id="orgdd7aa5e">
 [243:📑Main      4890]  [51:Groups       4677]  [27:Channels      210]
 [53:Contacts         ]  [0:Important         ]  [3:📑Archive      670]
 </pre>
@@ -958,7 +980,7 @@ Only chats matching <b><b>all</b></b> temexes in the active chat filter
 are displayed in rootbuf.  Active chat filter is displayed above the
 chat list in rootbuf, such as:
 </p>
-<pre class="example" id="org9854f43">
+<pre class="example" id="orgdd8cde4">
 -/------------------------------(main)--------------------------------
 </pre>
 
@@ -996,7 +1018,7 @@ By default, chats are sorted according to internal Telegram order
 In case active sorter is enabled, it is displayed above the chat
 list in rootbuf, such as:
 </p>
-<pre class="example" id="org302885e">
+<pre class="example" id="org5236eb7">
 -\---------------------(unread-count join-date)-----------------------
 </pre></dd>
 
@@ -1688,8 +1710,6 @@ You don't need te be a chat member to be able to send messages.
 Chat might not be known (i.e. in your Main or Archive list) to post
 messages into it. Use <code>is-known</code> chat temex to check chat is known.</dd>
 
-<dt>is-inline-bot</dt><dd>Matches if corresponding bot accepts inline requests.</dd>
-
 <dt>(unread-reactions [ <code>N</code> ])</dt><dd>Matches if chat has least <code>N</code> unread reactions.
 By default <code>N</code> is 1.</dd>
 
@@ -1759,6 +1779,8 @@ By default <code>N</code> is 1.</dd>
 
 <dt>(has-chosen-reaction [ <code>REACTION-TYPE</code> ])</dt><dd>Matches if message has a reaction chosen by me.</dd>
 
+<dt>is-pinned</dt><dd>Matches if message is pinned</dd>
+
 <dt>is-reply-to-msg</dt><dd>Matches if message is a reply to some message.</dd>
 
 <dt>is-reply-to-quote</dt><dd>Matches if message is a reply to a quote from some message.</dd>
@@ -1817,7 +1839,8 @@ Use <code>telega-user-match-p</code> to match a user.
 <dl class="org-dl">
 <dt>is-deleted</dt><dd>Matches if user account is deleted.</dd>
 
-<dt>is-bot</dt><dd>Matches if user is a bot.</dd>
+<dt>is-bot</dt><dd>Matches if user is a bot.
+Return <code>userTypeBot</code> TL structure.</dd>
 
 <dt>(status <code>STATUS-LIST</code>&#x2026;)</dt><dd><p>
 Matches if user status is one of <code>STATUS-LIST</code>.
@@ -1837,7 +1860,7 @@ Does not match bots, because bots are always online.
 Same as <code>(status "Online")</code> user temex.
 </p></dd>
 
-<dt>(contact [ <code>MUTUAL-P</code> ]), <kbd>/ c</kbd> (<code>telega-filter-by-contact</code>)</dt><dd>Matches if user is in my contacts list.
+<dt>(is-contact [ <code>MUTUAL-P</code> ]), <kbd>/ c</kbd> (<code>telega-filter-by-contact</code>)</dt><dd>Matches if user is in my contacts list.
 If <code>MUTUAL-P</code> is non-nil, then mach only if contact is mutual.</dd>
 
 <dt>is-close-friend</dt><dd>Matches if user is my close friend.</dd>
@@ -1874,7 +1897,7 @@ By default <code>blockListMain</code> is used.</dd>
 <dt>has-rating</dt><dd>Matches if user has rating.
 Return rating.</dd>
 
-<dt>is-bot-with-topics</dt><dd>Matches if user is a bot having topics.</dd>
+<dt>uses-unofficial-app</dt><dd>Matches if user uses an unofficial application that poses a security risk.</dd>
 </dl>
 </div>
 </div>
@@ -2053,35 +2076,22 @@ Car is name of the chats group, cdr is a chat temex to match chats.
 Default value: <code>(("Important" . important))</code>
 </p></li>
 <li><p>
-User Option: <code>telega-chat-delete-skip-confirmation-for</code> 
-</p>
-
-<p>
-Specifies Chat Temex for chats which can be deleted without
-typing confirmation. 
-</p>
-
-<p>
-Default value: <code>nil</code>
-</p></li>
-<li><p>
-User Option: <code>telega-chat-delete-skip-confirmation-for</code> 
-</p>
-
-<p>
-Specifies Chat Temex for chats which can be deleted without
-typing confirmation. 
-</p>
-
-<p>
-Default value: <code>nil</code>
-</p></li>
-<li><p>
 User Option: <code>telega-chat-custom-order-for</code> 
 </p>
 
 <p>
 Chat temex returning custom order for the chat. 
+</p>
+
+<p>
+Default value: <code>nil</code>
+</p></li>
+<li><p>
+User Option: <code>telega-avatar-workaround-gaps-for</code> 
+</p>
+
+<p>
+Chat temex for chats to enable workaround for gaps in the avatars. 
 </p>
 
 <p>
@@ -2101,13 +2111,6 @@ feature that allows users to organise chats into Chat Folders.
 
 <p>
 Each folder can have unlimited number of pinned chats.
-</p>
-
-<p>
-Before Telegram had support for Chat Folders, <code>telega</code> implemented
-custom chat label feature, resembling Chat Folders functionality.
-But now custom chat label feature is deprecated in favor to Chat
-Folders.  Use <kbd>M-x telega-folders-migrate-custom-labels RET</kbd> to migrate your custom labels into Chat Folders.
 </p>
 
 <p>
@@ -2444,7 +2447,7 @@ Non-nil to insert date break bar in chat buffers.
 Date break is a special mark separating two messages received on
 different days. Such as:
 </p>
-<pre class="example" id="orgc4b45c7">
+<pre class="example" id="org5a017c0">
 MSG1                              &lt;--- msg sent on 27dec
 -------(28 December 2020)------   &lt;--- date break
 MSG2                              &lt;--- msg sent on 28dec
@@ -2648,7 +2651,7 @@ Markup syntax table:
 There is also "markdown1" syntax to insert multiline code blocks of
 specified languge:
 </p>
-<pre class="example" id="orgdfcda54">
+<pre class="example" id="org2cd7e60">
 ```&lt;language-name&gt;
 first line of multiline preformatted code
 second line
@@ -2680,7 +2683,7 @@ Default value: <code>known</code>
 <p>
 Org syntax for code blocks is <b><b>NOT YET</b></b> supported:
 </p>
-<pre class="example" id="org7ac9f8a">
+<pre class="example" id="orgee86edc">
 #+begin_src &lt;language-name&gt;
 code line
 next code line
@@ -2940,25 +2943,13 @@ It is possible to edit a message using markup syntax.
 <p>
 To forward a message, put cursor under the message which you want to
 forward and press
- (<code>telega-msg-forward-dwim</code>)
-and then select a Chat to forward a message to.  To forward multiple
-messages at once, mark messages with the
+<kbd>f</kbd>, <kbd>&lt;down-mouse-3&gt; &lt;forward&gt;</kbd> (<code>telega-transient-msg-forward</code>).
+To forward multiple messages at once, mark messages with the
 <kbd>m</kbd>, <kbd>&lt;down-mouse-3&gt; &lt;mark&gt;</kbd> (<code>telega-msg-mark-toggle</code>) and then
 press
- (<code>telega-msg-forward-dwim</code>)
+<kbd>f</kbd>, <kbd>&lt;down-mouse-3&gt; &lt;forward&gt;</kbd> (<code>telega-transient-msg-forward</code>)
 on one of the messages.
 </p>
-
-<p>
-There are few options how you can affect the way a message is forwarded:
-</p>
-<ol class="org-ol">
-<li><kbd>C-u f</kbd> to forward a message copy, it will look like <b>you</b>
-sent a message.</li>
-<li><kbd>C-u C-u f</kbd> To forward a message copy deleting or
-replacing caption it has.  Use this to forward media message with
-your own caption.</li>
-</ol>
 </div>
 </div>
 <div id="outline-container-deleting-messages" class="outline-3">
@@ -2966,19 +2957,12 @@ your own caption.</li>
 <div class="outline-text-3" id="text-deleting-messages">
 <p>
 To delete a message, put cursor under the message you want to delete and press
- (<code>telega-msg-delete-marked-or-at-point</code>).
+<kbd>DEL</kbd>, <kbd>d</kbd> (<code>telega-transient-msg-delete</code>).
 </p>
 
 <p>
 As with <a href="#forwarding-messages">forwarding messages</a>, you can mark multiple messages to delete
 with <kbd>m</kbd>, <kbd>&lt;down-mouse-3&gt; &lt;mark&gt;</kbd> (<code>telega-msg-mark-toggle</code>).
-</p>
-
-<p>
-Also, you can ban/report message sender (and delete all messages from
-this sender in the chat) with
-<kbd>B</kbd>, <kbd>&lt;down-mouse-3&gt; &lt;ban-sender&gt;</kbd> (<code>telega-msg-ban-sender</code>) when
-cursor is under the message.
 </p>
 
 <p>
@@ -3354,7 +3338,7 @@ Default value: <code>t</code>
 <div class="outline-text-3" id="text-filtering-chat-messages-aka-shared-media">
 <p>
 Message filtering means to show only some messages matching filter.
-Available message filters are: <code>favorite</code>, <code>scheduled</code>, <code>search</code>, <code>by-sender</code>, <code>hashtag</code>, <code>topic</code>, <code>tag</code>, <code>photo</code>, <code>photo-video</code>, <code>url</code>, <code>doc</code>, <code>file</code>, <code>gif</code>, <code>audio</code>, <code>video</code>, <code>voice-note</code>, <code>video-note</code>, <code>voice-video-note</code>, <code>chat-photo</code>, <code>mention</code>, <code>unread-mention</code>, <code>unread-reaction</code>, <code>failed-to-send</code>, <code>pinned</code>
+Available message filters are: <code>favorite</code>, <code>scheduled</code>, <code>search</code>, <code>by-sender</code>, <code>hashtag</code>, <code>topic</code>, <code>tag</code>, <code>photo</code>, <code>photo-video</code>, <code>url</code>, <code>doc</code>, <code>file</code>, <code>gif</code>, <code>audio</code>, <code>video</code>, <code>voice-note</code>, <code>video-note</code>, <code>voice-video-note</code>, <code>chat-photo</code>, <code>poll</code>, <code>mention</code>, <code>unread-mention</code>, <code>unread-reaction</code>, <code>unread-poll-vote</code>, <code>failed-to-send</code>, <code>pinned</code>
 </p>
 
 <p>
@@ -3595,7 +3579,7 @@ Some media messages that are playing inside Emacs (such as "audio",
 "voice-note" or "video-note" messages) will have additional media
 control buttons to control media playback parameters:
 </p>
-<pre class="example" id="org2011827">
+<pre class="example" id="orge5f463f">
 [⏪] [⏩] [2×] [Stop] 
 </pre>
 
@@ -3606,8 +3590,8 @@ For fast access to media controls you can you next bindings:
 <dt><kbd>0</kbd> (<code>telega-msg--vvnote-stop</code>)</dt><dd>Stop playing media message.</dd>
 <dt><kbd>&lt;</kbd>, <kbd>,</kbd> (<code>telega-msg--vvnote-rewind-10-backward</code>)</dt><dd>Rewind 10 seconds backward.</dd>
 <dt><kbd>&gt;</kbd>, <kbd>.</kbd> (<code>telega-msg--vvnote-rewind-10-forward</code>)</dt><dd>Rewind 10 seconds forward.</dd>
-<dt><kbd>x</kbd> (<code>telega-msg--vvnote-play-speed-toggle</code>)</dt><dd>Toggle playback speed for the media message.
-Only two modes are available: normal speed and x2 speed.</dd>
+<dt><kbd>x</kbd> (<code>telega-msg--vvnote-play-speed-toggle</code>)</dt><dd>Cycle playback speed for the media message.
+Cycles through speeds defined in <code>telega-vvnote-play-speeds</code>.</dd>
 <dt><kbd>9</kbd>, <kbd>8</kbd>, <kbd>7</kbd>, <kbd>6</kbd>, <kbd>5</kbd>, <kbd>4</kbd>, <kbd>3</kbd>, <kbd>2</kbd>, <kbd>1</kbd> (<code>telega-msg--vvnote-rewind-part</code>)</dt><dd>Rewind to the N's 10 part of the message duration.
 I.e. if you press 7, then you will jump to 70% of the message
 duration.</dd>
@@ -3797,7 +3781,7 @@ while point is under sticker in the <code>*Telega Sticker Set*</code> buffer.
 </p>
 
 <p>
-Or you can press <kbd>S</kbd>, <kbd>&lt;down-mouse-3&gt; &lt;save&gt;</kbd>, <kbd>&lt;down-mouse-3&gt; &lt;save-music-to&gt; &lt;file&gt;</kbd> (<code>telega-msg-save</code>)
+Or you can press <kbd>s</kbd> (<code>telega-transient-msg-save</code>)
 on the sticker message to add that sticker to the favorite stickers
 list.
 </p>
@@ -3825,7 +3809,7 @@ messages.
 
 <p>
 To explicitly add animation to Saved Animations list, press
-<kbd>S</kbd>, <kbd>&lt;down-mouse-3&gt; &lt;save&gt;</kbd>, <kbd>&lt;down-mouse-3&gt; &lt;save-music-to&gt; &lt;file&gt;</kbd> (<code>telega-msg-save</code>) on the
+<kbd>s</kbd> (<code>telega-transient-msg-save</code>) on the
 corresponding animation message.
 </p>
 </div>
@@ -4764,6 +4748,40 @@ Default value: <code>"%i$%t, 100%I$%B/$%S"</code>
 </ul>
 </div>
 </div>
+<div id="outline-container-telega-proxy-status-mode" class="outline-3">
+<h3 id="telega-proxy-status-mode"><a class="self-link" href="#telega-proxy-status-mode"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>telega-proxy-status-mode</h3>
+<div class="outline-text-3" id="text-telega-proxy-status-mode">
+<p>
+Global minor mode to display Telegram proxy status in the rootbuf.
+</p>
+
+<p>
+Enable it with <code>(telega-proxy-status-mode 1)</code> or before authorization:
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(add-hook 'telega-before-auth-hook 'telega-proxy-status-mode)
+</pre>
+</div>
+
+<p>
+Customizable options:
+</p>
+<ul class="org-ul">
+<li><p>
+User Option: <code>telega-proxy-status-auto</code> 
+</p>
+
+<p>
+Automatically enable <code>telega-proxy-status-mode</code> when proxy is enabled.
+Also, enable <code>telega-proxy-status-mode</code> if Telegram blocking is expected. 
+</p>
+
+<p>
+Default value: <code>t</code>
+</p></li>
+</ul>
+</div>
+</div>
 <div id="outline-container-telega-transient-keymaps-mode--use-transient-for-telega-keymaps" class="outline-3">
 <h3 id="telega-transient-keymaps-mode--use-transient-for-telega-keymaps"><a class="self-link" href="#telega-transient-keymaps-mode--use-transient-for-telega-keymaps"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>telega-transient-keymaps-mode &#x2013; Use transient for telega keymaps</h3>
 <div class="outline-text-3" id="text-telega-transient-keymaps-mode--use-transient-for-telega-keymaps">
@@ -4912,7 +4930,7 @@ example, with <code>telega-url-shorten-mode</code> enabled in chatbuf, urls
 like:
 </p>
 
-<pre class="example" id="org136d85a">
+<pre class="example" id="org8b2183b">
 https://github.com/zevlg/telega.el/issues/105
 https://gitlab.com/jessieh/mood-line/issues/6
 https://www.youtube.com/watch?v=0m2jR6_eMkU

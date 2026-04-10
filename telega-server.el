@@ -292,6 +292,9 @@ Return parsed command."
                    ;; 404 - webpage or message not found
                    (telega-tl-error-equal value 404)
 
+                   ;; Proxy errors
+                   (telega-tl-error-equal value 400)
+
                    ;; 400 - Special case for `downloadFile' to alsways
                    ;; call it's callback in order to delete update
                    ;; callback
@@ -543,6 +546,17 @@ COMMAND is passed directly to `telega-server--send'."
            (plist-get telega-server--last-error :code)
            (plist-get telega-server--last-error :message)))
         ret))))
+
+(defmacro telega-server--send-or-call (sexp callback)
+  "Use this macro instead of `(or callback \\'ignore)' pattern."
+  (declare (indent 1))
+  (let ((cb-sym (gensym "callback"))
+        (sexp-sym (gensym "sexp")))
+    `(let ((,cb-sym ,callback)
+           (,sexp-sym ,sexp))
+       (if ,cb-sym
+           (telega-server--call ,sexp-sym ,cb-sym)
+         (telega-server--send ,sexp-sym)))))
 
 (defun telega-server--start ()
   "Start telega-server process."

@@ -301,8 +301,7 @@ notes, etc.
 * Getting started
 
 Start =telega= with {{{kbd(M-x telega RET)}}}. The first time it will
-ask for the phone number you have associated with the Telegram
-network.
+ask you to authorize via QR-code using official Telegram application.
 
 Some options affecting =TDLib= runtime:
 - {{{user-option-ndv(telega-directory, 2)}}}
@@ -310,7 +309,6 @@ Some options affecting =TDLib= runtime:
   Default value: "~/.telega"
 
 - {{{user-option(telega-options-plist, 2)}}}
-- {{{user-option(telega-proxies, 2)}}}
 - {{{user-option(telega-my-location, 2)}}}
 
   See also [[#telega-my-location-mode][telega-my-location-mode]] to automatically update
@@ -319,6 +317,10 @@ Some options affecting =TDLib= runtime:
 
 To list all available customizable user options use ~M-x
 customize-group RET telega RET~ command.
+
+** Using proxy to access Telegram
+
+#+ELLIT-INCLUDE: ../telega-info.el :label proxies
 
 * Settings for Emacs As Daemon
 
@@ -571,9 +573,8 @@ Use ~telega-story-match-p~ to match a story.
 - {{{user-option(telega-chat-group-messages-for, 2)}}}
 - {{{user-option(telega-chat-show-deleted-messages-for, 2)}}}
 - {{{user-option(telega-root-view-grouping-alist, 2)}}}
-- {{{user-option(telega-chat-delete-skip-confirmation-for, 2)}}}
-- {{{user-option(telega-chat-delete-skip-confirmation-for, 2)}}}
 - {{{user-option(telega-chat-custom-order-for, 2)}}}
+- {{{user-option(telega-avatar-workaround-gaps-for, 2)}}}
 
 * Chat Folders
 
@@ -761,33 +762,20 @@ It is possible to edit a message using markup syntax.
 
 To forward a message, put cursor under the message which you want to
 forward and press
-{{{where-is(telega-msg-forward-dwim,telega-msg-button-map)}}}
-and then select a Chat to forward a message to.  To forward multiple
-messages at once, mark messages with the
+{{{where-is(telega-transient-msg-forward,telega-msg-button-map)}}}.
+To forward multiple messages at once, mark messages with the
 {{{where-is(telega-msg-mark-toggle,telega-msg-button-map)}}} and then
 press
-{{{where-is(telega-msg-forward-dwim,telega-msg-button-map)}}}
+{{{where-is(telega-transient-msg-forward,telega-msg-button-map)}}}
 on one of the messages.
-
-There are few options how you can affect the way a message is forwarded:
-1. {{{kbd(C-u f)}}} to forward a message copy, it will look like *you*
-   sent a message.
-2. {{{kbd(C-u C-u f)}}} To forward a message copy deleting or
-   replacing caption it has.  Use this to forward media message with
-   your own caption.
 
 ** Deleting messages
 
 To delete a message, put cursor under the message you want to delete and press
-{{{where-is(telega-msg-delete-marked-or-at-point,telega-msg-button-map)}}}.
+{{{where-is(telega-transient-msg-delete,telega-msg-button-map)}}}.
 
 As with [[#forwarding-messages][forwarding messages]], you can mark multiple messages to delete
 with {{{where-is(telega-msg-mark-toggle,telega-msg-button-map)}}}.
-
-Also, you can ban/report message sender (and delete all messages from
-this sender in the chat) with
-{{{where-is(telega-msg-ban-sender,telega-msg-button-map)}}} when
-cursor is under the message.
 
 =telega= can keep deleted messages visible until chatbuf is
 killed. This is controlled using custom variable:
@@ -1107,7 +1095,7 @@ To toggle sticker being favorite, press
 {{{where-is(telega-sticker-toggle-favorite,telega-sticker-button-map)}}}
 while point is under sticker in the ~*Telega Sticker Set*~ buffer.
 
-Or you can press {{{where-is(telega-msg-save,telega-msg-button-map)}}}
+Or you can press {{{where-is(telega-transient-msg-save,telega-msg-button-map)}}}
 on the sticker message to add that sticker to the favorite stickers
 list.
 
@@ -1125,7 +1113,7 @@ To play animation message press {{{kbd(RET)}}} on the message.  Also,
 messages.
 
 To explicitly add animation to Saved Animations list, press
-{{{where-is(telega-msg-save,telega-msg-button-map)}}} on the
+{{{where-is(telega-transient-msg-save,telega-msg-button-map)}}} on the
 corresponding animation message.
 
 * Stories
