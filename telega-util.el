@@ -2506,6 +2506,7 @@ the symbol `content' to use METRICS, a (HEIGHT . ASCENT) cons from
             (let ((image (telega-svg-image svg
                            :scale 1.0
                            :height (telega-ch-height height)
+                           :background nil
                            :telega-text (car bracket-spec)
                            :ascent ascent)))
               (telega-emoji--image-cache-put cacheprop 1 image)

@@ -463,6 +463,8 @@ Have Stoploss 690 Satoshi." :entities []))))
           (should (equal (plist-get (cdr content-image) :height)
                          (telega-ch-height 1.5)))
           (should (= (plist-get (cdr content-image) :ascent) 80))
+          (should (plist-member (cdr content-image) :background))
+          (should-not (plist-get (cdr content-image) :background))
           (should (string-match-p
                    "<svg width=\"[^\"]+\" height=\"16\""
                    (plist-get (cdr content-image) :data))))))))
