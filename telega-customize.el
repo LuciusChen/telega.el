@@ -364,6 +364,10 @@ performance might suffer."
      :inherit keyboard-default
      :passive-face telega-box-button-success-passive
      :active-face telega-box-button-success-active)
+    (keyboard-link
+     :left-bracket ""
+     :right-bracket ""
+     :passive-face telega-link)
 
     ;; Icons for keyboard buttons, use only in style mixins
     ;; TODO: drawing corner icons using svg
