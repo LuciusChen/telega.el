@@ -291,6 +291,49 @@ Have Stoploss 690 Satoshi." :entities []))))
             (button-activate button)
             (should (equal opened-url "https://example.com"))))))))
 
+(ert-deftest telega-rich-message-table-alignment ()
+  "Table rulers and cell borders align inside message and quote prefixes."
+  (let ((table
+         (list :@type "pageBlockTable" :is_bordered t
+               :cells (cl-map 'vector
+                        (lambda (row)
+                          (cl-map 'vector
+                            (lambda (text)
+                              (list :text (list :@type "richTextPlain" :text text)
+                                    :colspan 1 :rowspan 1))
+                            row))
+                        '(("中文" "Long value 🙂 ❤️") ("" "X\nY")
+                          ("Emoji" "👩‍💻 🇨🇳"))))))
+    (dolist (block (list table (list :@type "pageBlockBlockQuote"
+                                   :blocks (vector table))))
+      (with-temp-buffer
+        (telega-ins--line-wrap-prefix "    "
+          (telega-ins "Before")
+          (telega-rich-text--ins-pb block)
+          (telega-rich-text--ins-pb
+           '(:@type "pageBlockParagraph"
+             :text (:@type "richTextPlain" :text "After"))))
+        (should (string-prefix-p "Before\n" (buffer-string)))
+        (should (string-suffix-p "\nAfter\n" (buffer-string)))
+        (save-window-excursion
+          (set-window-buffer (selected-window) (current-buffer))
+          (goto-char (point-min))
+          (let (expected)
+            (while (not (eobp))
+              (let ((end (line-end-position))
+                    borders)
+                (while (re-search-forward "[+|]" end t)
+                  (push (car (window-text-pixel-size
+                              nil (line-beginning-position) (1- (point))))
+                        borders))
+                (when borders
+                  (should (= (length borders) 3))
+                  (if expected
+                      (should (equal borders expected))
+                    (setq expected borders))))
+              (forward-line))
+            (should expected)))))))
+
 (ert-deftest telega-webpage-tdlib-1.8.66-block-fields ()
   (with-temp-buffer
     (let ((telega-webpage-strip-nl t))
