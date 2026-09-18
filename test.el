@@ -571,7 +571,7 @@ Have Stoploss 690 Satoshi." :entities []))))
                                     :duration 11 :length 240)))))))
 
 (ert-deftest telega-box-button-content-metrics ()
-  (let (line-heights)
+  (let (line-heights expected-remapping)
     (cl-letf (((symbol-function 'get-buffer-window)
                (lambda (&rest _args) (selected-window)))
               ((symbol-function 'telega-chars-xheight)
@@ -581,7 +581,10 @@ Have Stoploss 690 Satoshi." :entities []))))
               ;; First call measures the line height H1, second call
               ;; measures H1 + line descent (the baseline probe)
               ((symbol-function 'buffer-text-pixel-size)
-               (lambda (&rest _args) (cons 42 (pop line-heights)))))
+               (lambda (&rest _args)
+                 (when expected-remapping
+                   (should (equal face-remapping-alist expected-remapping)))
+                 (cons 42 (pop line-heights)))))
       ;; Plain text line: height 14, descent 2 -> ascent 12
       (setq line-heights (list 14 16))
       (should (equal (telega-box-button--content-metrics "A")
@@ -599,7 +602,14 @@ Have Stoploss 690 Satoshi." :entities []))))
       ;; the bracket 1px too low; 79% restores exact 18px
       (setq line-heights (list 23 28))
       (should (equal (telega-box-button--content-metrics (string ?A #xfe0f))
-                     (cons (/ 23.0 14) 79))))))
+                     (cons (/ 23.0 14) 79)))
+      ;; Text scaling is buffer-local and must carry into the work buffer.
+      (with-temp-buffer
+        (face-remap-add-relative 'default :height 1.5)
+        (setq expected-remapping face-remapping-alist
+              line-heights (list 21 24))
+        (should (equal (telega-box-button--content-metrics "A")
+                       (cons 1.5 86)))))))
 
 (ert-deftest telega-box-button-content-height-inserter ()
   (let ((calls 0)

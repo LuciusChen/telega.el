@@ -2409,23 +2409,26 @@ account."
                 ((display-graphic-p (window-frame window)))
                 (char-height (telega-chars-xheight 1))
                 ((> char-height 0)))
-      (with-temp-buffer
-        (setq-local inhibit-read-only t)
-        (setq-local truncate-lines t)
-        (insert content)
-        ;; Include the default font's ascent and descent in the line metrics.
-        (insert (propertize "x" 'face 'default))
-        (when-let* ((h1 (cdr (buffer-text-pixel-size
-                              (current-buffer) window t)))
-                    ((> h1 0)))
-          ;; A full-ascent H1-pixel probe adds the line's descent to H1.
-          (insert (propertize " " 'display `(space :height (,h1) :ascent 100)))
-          (let* ((h2 (cdr (buffer-text-pixel-size
-                           (current-buffer) window t)))
-                 (ascent (- (* 2 h1) h2)))
-            ;; Image ascent is truncated to pixels, so round up to cover content.
-            (cons (/ (float h1) char-height)
-                  (max 0 (min 100 (ceiling (* 100 ascent) h1))))))))))
+      (let ((remapping face-remapping-alist))
+        (with-temp-buffer
+          ;; Keep buffer-local text scaling in the measurement buffer.
+          (setq-local face-remapping-alist remapping
+                      truncate-lines t
+                      inhibit-read-only t)
+          (insert content)
+          ;; Include the default font's ascent and descent in the line metrics.
+          (insert (propertize "x" 'face 'default))
+          (when-let* ((h1 (cdr (buffer-text-pixel-size
+                                (current-buffer) window t)))
+                      ((> h1 0)))
+            ;; A full-ascent H1-pixel probe adds the line's descent to H1.
+            (insert (propertize " " 'display `(space :height (,h1) :ascent 100)))
+            (let* ((h2 (cdr (buffer-text-pixel-size
+                             (current-buffer) window t)))
+                   (ascent (- (* 2 h1) h2)))
+              ;; Image ascent is truncated to pixels, so round up to cover content.
+              (cons (/ (float h1) char-height)
+                    (max 0 (min 100 (ceiling (* 100 ascent) h1)))))))))))
 
 (defun telega-box-button--bracket-image (style bracket-prop
                                                &optional bracket-spec metrics)
