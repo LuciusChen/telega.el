@@ -336,7 +336,7 @@ Have Stoploss 690 Satoshi." :entities []))))
             (should-not (string-match-p "Secret" (buffer-string)))))))))
 
 (ert-deftest telega-rich-message-table-alignment ()
-  "Table rulers and cell borders align inside message and quote prefixes."
+  "Table columns align inside message and quote prefixes."
   (let ((table
          (list :@type "pageBlockTable" :is_bordered t
                :cells (cl-map 'vector
@@ -361,21 +361,15 @@ Have Stoploss 690 Satoshi." :entities []))))
         (should (string-suffix-p "\nAfter\n" (buffer-string)))
         (save-window-excursion
           (set-window-buffer (selected-window) (current-buffer))
-          (goto-char (point-min))
           (let (expected)
-            (while (not (eobp))
-              (let ((end (line-end-position))
-                    borders)
-                (while (re-search-forward "[+|]" end t)
-                  (push (car (window-text-pixel-size
-                              nil (line-beginning-position) (1- (point))))
-                        borders))
-                (when borders
-                  (should (= (length borders) 3))
-                  (if expected
-                      (should (equal borders expected))
-                    (setq expected borders))))
-              (forward-line))
+            (dolist (text '("Long value" "X" "👩‍💻"))
+              (goto-char (point-min))
+              (let* ((start (- (search-forward text) (length text)))
+                     (column (car (window-text-pixel-size
+                                   nil (line-beginning-position) start))))
+                (if expected
+                    (should (= column expected))
+                  (setq expected column))))
             (should expected)))))))
 
 (ert-deftest telega-rich-message-button-row-height ()

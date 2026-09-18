@@ -290,9 +290,9 @@
                    collect `(tr nil ,@cells)))
          (shr-use-fonts t)
          (shr-width telega-webpage-fill-column)
-         (shr-table-horizontal-line (when (plist-get pb :is_bordered) ?-))
-         (shr-table-vertical-line (if (plist-get pb :is_bordered) ?| ?\s))
-         (shr-table-corner ?+)
+         (shr-table-horizontal-line (when (plist-get pb :is_bordered) ?─))
+         (shr-table-vertical-line ?\s)
+         (shr-table-corner ?─)
          (shr-external-rendering-functions
           '((telega-cell .
              (lambda (dom)
