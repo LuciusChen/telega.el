@@ -2410,6 +2410,7 @@ account."
                 (char-height (telega-chars-xheight 1))
                 ((> char-height 0)))
       (with-temp-buffer
+        (setq-local inhibit-read-only t)
         (setq-local truncate-lines t)
         (insert content)
         ;; Include the default font's ascent and descent in the line metrics.

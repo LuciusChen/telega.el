@@ -2188,10 +2188,12 @@ Return what BODY returns."
                                       'content)))
                            (list ,left-bracket-sym ,right-bracket-sym)))
          (setq ,metrics-sym
-               (telega-box-button--content-metrics
-                (concat (buffer-substring
-                         (line-beginning-position) ,left-start-sym)
-                        (buffer-substring ,body-start-sym (point))))))
+               (or (telega-box-button--style-get
+                    ,style-sym :content-metrics)
+                   (telega-box-button--content-metrics
+                    (concat (buffer-substring
+                             (line-beginning-position) ,left-start-sym)
+                            (buffer-substring ,body-start-sym (point)))))))
 
        ;; Adjust already inserted left bracket to content height.
        (when (and ,metrics-sym (consp ,left-bracket-sym)

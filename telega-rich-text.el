@@ -29,6 +29,8 @@
 
 (declare-function telega-webpage--add-anchor "telega-webpage" (name))
 (declare-function telega-ins--keyboard-button "telega-ins" (kbd-button msg &rest args))
+(declare-function telega-ins--keyboard-button-label "telega-ins"
+                  (kbd-button &optional forced-width))
 (declare-function telega-ins--date-time-formatting "telega-ins" (timestamp ts-fmt))
 
 
@@ -574,13 +576,20 @@
       (pageBlockButtonRow
        ;; TODO: honor `:align'.
        (when-let* ((buttons (append (plist-get pb :buttons) nil)))
-         (telega-rich-text--ins-block
-          (while buttons
-            (telega-ins--keyboard-button (pop buttons) msg)
-            (when buttons
-              (telega-ins--box-button-delimiter
-               (telega-box-button-style 'keyboard-default) :col-delimiter)))
-          t)))
+         (let* ((labels (mapcar #'telega-ins--keyboard-button-label buttons))
+                ;; Buttons share one display line, so their brackets need
+                ;; the same height even when emoji fonts differ.
+                (metrics (when (cdr buttons)
+                           (telega-box-button--content-metrics
+                            (mapconcat #'identity labels " ")))))
+           (telega-rich-text--ins-block
+            (while buttons
+              (telega-ins--keyboard-button (pop buttons) msg
+                :label (pop labels) :forced-metrics metrics)
+              (when buttons
+                (telega-ins--box-button-delimiter
+                 (telega-box-button-style 'keyboard-default) :col-delimiter)))
+            t))))
       (pageBlockUnsupported
        (telega-ins "<TODO: pageBlockUnsupported>"))
       )

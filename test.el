@@ -378,6 +378,44 @@ Have Stoploss 690 Satoshi." :entities []))))
               (forward-line))
             (should expected)))))))
 
+(ert-deftest telega-rich-message-button-row-height ()
+  "Buttons on one row use the tallest label for both SVG brackets."
+  (let ((telega-use-images t)
+        (telega-emoji-use-images nil)
+        (row '(:@type "pageBlockButtonRow"
+               :buttons [(:@type "inlineButton"
+                          :text (:@type "richTextPlain" :text "↩️ 解除封禁")
+                          :style (:@type "buttonStyleSuccess")
+                          :type (:@type "inlineKeyboardButtonTypeCallback"
+                                 :data "undo"))
+                         (:@type "inlineButton"
+                          :text (:@type "richTextPlain" :text "🔘 关闭")
+                          :style (:@type "buttonStylePrimary")
+                          :type (:@type "inlineKeyboardButtonTypeCallback"
+                                 :data "close"))])))
+    (cl-letf (((symbol-function 'telega-ins--image)
+               (lambda (image &optional _slice-num &rest _props)
+                 (let ((start (point)))
+                   (telega-ins (plist-get (cdr image) :telega-text))
+                   (put-text-property start (point) 'display image))))
+              ((symbol-function 'telega-box-button--content-metrics)
+               (lambda (content)
+                 (if (string-match-p "🔘" content) '(1.5 . 75) '(1 . 80)))))
+      (with-temp-buffer
+        (telega-rich-text--ins-pb row)
+        (goto-char (point-min))
+        (dolist (label '("解除封禁" "关闭"))
+          (search-forward label)
+          (let ((left (get-text-property
+                       (save-excursion (search-backward "[")) 'display))
+                (right (get-text-property
+                        (save-excursion (search-forward "]") (1- (point)))
+                        'display)))
+            (dolist (image (list left right))
+              (should (equal (plist-get (cdr image) :height)
+                             (telega-ch-height 1.5)))
+              (should (= (plist-get (cdr image) :ascent) 75)))))))))
+
 (ert-deftest telega-rich-message-open-content ()
   "Opening a rich message fetches its full content only when needed."
   (let (requested)
@@ -547,6 +585,10 @@ Have Stoploss 690 Satoshi." :entities []))))
       ;; Plain text line: height 14, descent 2 -> ascent 12
       (setq line-heights (list 14 16))
       (should (equal (telega-box-button--content-metrics "A")
+                     (cons 1.0 86)))
+      (setq line-heights (list 14 16))
+      (should (equal (telega-box-button--content-metrics
+                      (propertize "A" 'read-only t))
                      (cons 1.0 86)))
       ;; Line with emoji: height 20, descent 5 -> ascent 15
       (setq line-heights (list 20 25))
