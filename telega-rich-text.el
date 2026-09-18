@@ -292,7 +292,7 @@
          (shr-width telega-webpage-fill-column)
          (shr-table-horizontal-line (when (plist-get pb :is_bordered) ?─))
          (shr-table-vertical-line ?\s)
-         (shr-table-corner ?─)
+         (shr-table-corner ?\s)
          (shr-external-rendering-functions
           '((telega-cell .
              (lambda (dom)
