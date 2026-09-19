@@ -4590,7 +4590,8 @@ If REMOVE-CAPTION is specified, then do not insert caption."
         ;; NOTE: insert only first block to avoid heavy insertions
         (telega-ins--with-face 'telega-rich-text-face
           (telega-rich-text--ins-pb-one-line
-           (seq-elt (telega--tl-get content :message :blocks) 0))))
+           (seq-elt (telega--tl-get content :message :blocks) 0)
+           msg)))
 
        (t (telega-ins--content msg)))
      t)))
