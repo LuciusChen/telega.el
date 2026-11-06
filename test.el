@@ -1036,6 +1036,30 @@ argument would leave them holding an object the cache does not use."
       (should (equal (get-text-property 1 'wrap-prefix)
                      (if (consp prefix) (cdr prefix) prefix))))))
 
+(ert-deftest telega-redraw-on-theme-change ()
+  "Palette colors are literal text properties, redraw picks the new ones."
+  (let ((color "#111111")
+        (root (generate-new-buffer telega-root-buffer-name))
+        (chatbuf (generate-new-buffer " *chatbuf*")))
+    (unwind-protect
+        (let ((telega--chat-buffers-alist (list (cons 'chat chatbuf))))
+          (with-current-buffer chatbuf
+            (setq-local telega-chatbuf--ewoc
+                        (ewoc-create
+                         (lambda (_)
+                           (insert (propertize "msg" 'face `((:foreground ,color)))))
+                         nil nil t))
+            (ewoc-enter-last telega-chatbuf--ewoc 'node))
+          (setq color "#eeeeee")
+          (cl-letf (((symbol-function 'telega-root-view--redisplay) #'ignore)
+                    ((symbol-function 'telega-chatbuf--footer-update) #'ignore))
+            (telega--redraw-on-theme-change))
+          (with-current-buffer chatbuf
+            (should (equal '((:foreground "#eeeeee"))
+                           (get-text-property 1 'face)))))
+      (kill-buffer root)
+      (kill-buffer chatbuf))))
+
 ;; Local Variables:
 ;; no-byte-compile: t
 ;; End:

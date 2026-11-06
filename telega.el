@@ -422,6 +422,20 @@ string at point."
 (add-hook 'telega-chatbuf-pre-msg-insert-hook #'telega-msg--custom-emojis-fetch)
 (add-hook 'telega-chatbuf-post-msg-update-hook #'telega-msg--custom-emojis-fetch)
 
+;; Palette colors are inserted as literal values, redraw to follow the theme
+(defun telega--redraw-on-theme-change (&rest _)
+  "Redraw root and chat buffers using colors of the enabled theme."
+  (when (get-buffer telega-root-buffer-name)
+    (telega-root-view--redisplay)
+    (dolist (chatbuf (telega-chat-buffers))
+      (with-current-buffer chatbuf
+        (with-telega-buffer-modify
+         (telega-save-cursor
+           (telega-chatbuf--footer-update)
+           (ewoc-refresh telega-chatbuf--ewoc)))))))
+
+(add-hook 'enable-theme-functions #'telega--redraw-on-theme-change)
+
 ;; WARN about usage of the obsolete variables
 (require 'telega-obsolete)
 
